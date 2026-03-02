@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기생충학및실습 | 경남정보대학교</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#090e1a;--bg2:#101624;--bg3:#18243a;
+  --teal:#00c9b1;--purple:#a78bfa;--gold:#fbbf24;--coral:#f87171;
+  --blue:#60a5fa;--lime:#86efac;--orange:#fb923c;--mint:#34d399;--pink:#f472b6;
+  --white:#f1f5f9;--offwh:#cbd5e1;--gray:#64748b;--dgray:#334155;
+  --font:'Noto Sans KR',sans-serif;--serif:'Noto Serif KR',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(9,14,26,.96);
+backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,201,177,.18);
+display:flex;align-items:center;padding:0 20px;height:56px;gap:6px;}
+.nav-logo{font-family:var(–serif);font-size:15px;font-weight:700;color:var(–teal);
+margin-right:auto;cursor:pointer;white-space:nowrap;}
+.nav-logo:hover{opacity:.8;}
+.nb{padding:6px 12px;border-radius:7px;border:1px solid var(–dgray);
+background:transparent;color:var(–gray);font-family:var(–font);font-size:12px;
+cursor:pointer;transition:all .2s;white-space:nowrap;}
+.nb:hover,.nb.on{border-color:var(–teal);color:var(–teal);background:rgba(0,201,177,.08);}
+.nb.adm{border-color:var(–gold);color:var(–gold);}
+.nb.adm:hover{background:rgba(251,191,36,.1);}
+
+.page{display:none;padding-top:66px;min-height:100vh;}
+.page.on{display:block;}
+
+/* HOME */
+.hero{padding:36px 20px 20px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:’’;position:absolute;inset:0;
+background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(0,201,177,.1) 0%,transparent 70%);pointer-events:none;}
+.hero-tag{display:inline-block;padding:4px 14px;border-radius:20px;
+border:1px solid rgba(0,201,177,.35);background:rgba(0,201,177,.07);
+color:var(–teal);font-size:11px;margin-bottom:12px;font-family:var(–mono);letter-spacing:.5px;}
+.hero h1{font-family:var(–serif);font-size:clamp(22px,4vw,36px);font-weight:700;line-height:1.3;margin-bottom:8px;}
+.hero h1 em{color:var(–teal);font-style:normal;}
+.hero p{color:var(–gray);font-size:13px;max-width:480px;margin:0 auto 18px;line-height:1.7;}
+.hero-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
+.snum{font-family:var(–mono);font-size:26px;font-weight:600;}
+.slbl{font-size:11px;color:var(–gray);margin-top:2px;}
+.home-body{max-width:960px;margin:0 auto;padding:0 20px 60px;}
+.part-hdr{display:flex;align-items:center;gap:10px;
+font-size:10.5px;font-family:var(–mono);color:var(–gray);
+text-transform:uppercase;letter-spacing:1.2px;margin:20px 0 10px;}
+.part-hdr::after{content:’’;flex:1;height:1px;background:var(–dgray);}
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.chi{background:var(–bg2);border-radius:13px;border:1px solid var(–dgray);
+padding:16px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
+.chi::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;background:var(–ac,var(–teal));}
+.chi:hover{border-color:var(–ac,var(–teal));transform:translateY(-2px);background:var(–bg3);}
+.chi.lk{opacity:.28;cursor:not-allowed;filter:grayscale(.5);}
+.chi.lk:hover{transform:none;border-color:var(–dgray);background:var(–bg2);}
+.chi-wk{font-family:var(–mono);font-size:10px;color:var(–ac,var(–teal));margin-bottom:7px;letter-spacing:.5px;}
+.chi-tt{font-size:13.5px;font-weight:700;line-height:1.4;margin-bottom:4px;}
+.chi-sb{font-size:11px;color:var(–gray);line-height:1.5;}
+.chi.lk .chi-wk{color:var(–gray);}
+.lk-ic{position:absolute;top:10px;right:10px;font-size:12px;opacity:.4;}
+
+/* DETAIL */
+.det-wrap{max-width:820px;margin:0 auto;padding:24px 20px 70px;}
+.bk{display:inline-flex;align-items:center;gap:6px;color:var(–gray);font-size:13px;
+cursor:pointer;margin-bottom:16px;transition:color .2s;border:none;background:none;font-family:var(–font);}
+.bk:hover{color:var(–teal);}
+.det-hdr{background:var(–bg2);border-radius:13px;border-left:4px solid var(–teal);
+padding:16px 20px;margin-bottom:16px;}
+.det-hdr .ptag{font-size:10px;font-family:var(–mono);color:var(–teal);margin-bottom:4px;letter-spacing:.5px;}
+.det-hdr h2{font-family:var(–serif);font-size:19px;font-weight:700;margin-bottom:2px;}
+.det-hdr p{font-size:12px;color:var(–gray);}
+.det-tabs{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap;}
+.dtab{padding:7px 15px;border-radius:18px;border:1px solid var(–dgray);
+background:transparent;color:var(–gray);font-family:var(–font);font-size:12.5px;cursor:pointer;transition:all .2s;}
+.dtab.on{background:var(–teal);border-color:var(–teal);color:var(–bg);font-weight:700;}
+.dpanel{display:none;}
+.dpanel.on{display:block;}
+
+/* SUMMARY */
+.sum-box{background:var(–bg3);border-radius:11px;border:1px solid var(–dgray);
+padding:16px 18px;margin-bottom:11px;font-size:13.5px;line-height:1.9;color:var(–offwh);}
+.sum-box strong{color:var(–white);}
+.sum-box em{color:var(–teal);font-style:italic;}
+
+/* KEY POINTS */
+.kp-list{display:flex;flex-direction:column;gap:8px;}
+.kp-item{background:var(–bg3);border-radius:11px;border:1px solid var(–dgray);
+padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+.kp-dot{width:7px;height:7px;border-radius:50%;background:var(–teal);flex-shrink:0;margin-top:6px;}
+.kp-item p{font-size:13px;line-height:1.8;color:var(–offwh);}
+.kp-item strong{color:var(–white);}
+.kp-item em{color:var(–teal);font-style:normal;font-weight:700;}
+
+/* INLINE FLASHCARD */
+.ifl-wrap{max-width:560px;margin:0 auto;}
+.ifl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.ifl-cnt{font-family:var(–mono);font-size:12px;color:var(–gray);}
+.ifl-shuf{padding:5px 13px;border-radius:7px;border:1px solid var(–dgray);
+background:transparent;color:var(–gray);font-family:var(–font);font-size:12px;cursor:pointer;}
+.ifl-shuf:hover{color:var(–white);border-color:var(–white);}
+.ifl-card{border-radius:16px;border:1px solid var(–dgray);background:var(–bg3);
+padding:28px 24px;min-height:170px;cursor:pointer;text-align:center;
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+transition:border-color .3s;user-select:none;}
+.ifl-card.ans{border-color:var(–teal);}
+.ifl-type{font-family:var(–mono);font-size:10px;letter-spacing:1px;color:var(–gray);}
+.ifl-q{font-size:15px;font-weight:700;line-height:1.65;}
+.ifl-a{font-size:13px;color:var(–offwh);line-height:1.75;white-space:pre-line;}
+.ifl-hint{font-size:11px;color:var(–dgray);}
+.ifl-nav{display:flex;gap:8px;justify-content:center;margin-top:12px;}
+.ifl-btn{padding:8px 22px;border-radius:9px;border:1px solid var(–dgray);
+background:transparent;color:var(–white);font-family:var(–font);font-size:13px;cursor:pointer;}
+.ifl-btn:hover{background:var(–bg3);}
+
+/* QUIZ */
+.quiz-intro{background:var(–bg3);border-radius:13px;border:1px solid var(–dgray);
+padding:24px;text-align:center;margin-bottom:16px;}
+.quiz-intro h3{font-size:16px;font-weight:700;margin-bottom:6px;}
+.quiz-intro p{color:var(–gray);font-size:13px;line-height:1.7;margin-bottom:16px;}
+.start-btn{padding:9px 28px;border-radius:9px;background:var(–teal);border:none;
+color:var(–bg);font-family:var(–font);font-size:13.5px;font-weight:700;cursor:pointer;}
+.start-btn:hover{opacity:.85;}
+.qprog{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.qpnum{font-family:var(–mono);font-size:11.5px;color:var(–gray);white-space:nowrap;}
+.pbar{flex:1;height:3px;background:var(–dgray);border-radius:2px;overflow:hidden;}
+.pfill{height:100%;background:var(–teal);border-radius:2px;transition:width .35s;}
+.q-card{background:var(–bg2);border-radius:13px;border:1px solid var(–dgray);padding:20px;margin-bottom:12px;}
+.q-num{font-family:var(–mono);font-size:10px;color:var(–gray);margin-bottom:8px;}
+.q-text{font-size:15px;font-weight:700;line-height:1.65;margin-bottom:18px;}
+.opts{display:flex;flex-direction:column;gap:7px;}
+.opt{padding:11px 14px;border-radius:10px;border:1px solid var(–dgray);background:var(–bg3);
+cursor:pointer;font-size:13px;transition:all .18s;display:flex;align-items:center;gap:10px;}
+.opt:hover{border-color:var(–teal);background:rgba(0,201,177,.06);}
+.opt.sel{border-color:var(–teal);background:rgba(0,201,177,.08);}
+.ol{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;
+justify-content:center;background:var(–dgray);color:var(–gray);font-size:11px;font-weight:700;transition:all .18s;}
+.opt.sel .ol{background:var(–teal);color:var(–bg);}
+.qsub{display:block;margin:16px auto 0;padding:9px 28px;border-radius:9px;border:none;
+background:var(–gold);color:var(–bg);font-family:var(–font);font-size:13.5px;font-weight:700;cursor:pointer;}
+.qsub:hover{opacity:.88;}
+.res-card{background:var(–bg2);border-radius:13px;border:1px solid var(–dgray);
+padding:26px;text-align:center;margin-bottom:16px;}
+.res-sc{font-family:var(–mono);font-size:56px;font-weight:700;line-height:1;color:var(–teal);}
+.res-card h3{font-size:18px;margin:10px 0 4px;}
+.res-card p{color:var(–gray);font-size:13px;}
+.retry{padding:8px 24px;border-radius:9px;border:1px solid var(–dgray);
+background:transparent;color:var(–white);font-family:var(–font);font-size:13px;cursor:pointer;margin-top:16px;}
+.retry:hover{border-color:var(–teal);color:var(–teal);}
+.rv-item{background:var(–bg3);border-radius:10px;border:1px solid var(–dgray);overflow:hidden;margin-bottom:10px;}
+.rv-hd{padding:12px 15px;display:flex;gap:9px;align-items:flex-start;}
+.rv-bg{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.rv-bg.ok{background:rgba(134,239,172,.15);color:var(–lime);}
+.rv-bg.ng{background:rgba(248,113,113,.15);color:var(–coral);}
+.rv-q{font-size:13px;font-weight:600;line-height:1.6;}
+.rv-bd{padding:9px 15px 12px;border-top:1px solid rgba(255,255,255,.05);font-size:12px;line-height:1.85;}
+.rv-ok{color:var(–lime);}
+.rv-ng{color:var(–coral);}
+.rv-ex{color:var(–offwh);margin-top:4px;}
+
+/* ADMIN */
+.adm-wrap{max-width:840px;margin:0 auto;padding:24px 20px 60px;}
+.adm-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.adm-hdr h2{font-family:var(–serif);font-size:18px;}
+.logout{padding:6px 13px;border-radius:7px;border:1px solid var(–dgray);
+background:transparent;color:var(–gray);font-family:var(–font);font-size:12px;cursor:pointer;}
+.logout:hover{color:var(–white);border-color:var(–white);}
+.atabs{display:flex;gap:7px;margin-bottom:18px;}
+.atab{padding:6px 14px;border-radius:7px;border:1px solid var(–dgray);
+background:transparent;color:var(–gray);font-family:var(–font);font-size:12px;cursor:pointer;transition:all .2s;}
+.atab.on{background:var(–gold);border-color:var(–gold);color:var(–bg);font-weight:700;}
+.apanel{display:none;}
+.apanel.on{display:block;}
+.vis-row{background:var(–bg2);border:1px solid var(–dgray);border-radius:10px;
+padding:12px 15px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.vis-row:hover{border-color:var(–gold);}
+.vi{flex:1;font-size:13px;}
+.vi small{font-size:11px;color:var(–gray);margin-left:6px;font-family:var(–mono);}
+.tog{position:relative;width:40px;height:21px;flex-shrink:0;}
+.tog input{opacity:0;width:0;height:0;}
+.tsl{position:absolute;inset:0;border-radius:21px;background:var(–dgray);cursor:pointer;transition:.25s;}
+.tsl::before{content:’’;position:absolute;width:15px;height:15px;border-radius:50%;left:3px;top:3px;background:var(–gray);transition:.25s;}
+.tog input:checked+.tsl{background:var(–teal);}
+.tog input:checked+.tsl::before{transform:translateX(19px);background:var(–bg);}
+.aform{background:var(–bg2);border:1px solid var(–dgray);border-radius:11px;padding:18px;margin-top:16px;}
+.aform h4{font-size:13px;font-weight:700;color:var(–gold);margin-bottom:14px;}
+.frow{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
+.frow label{font-size:10.5px;color:var(–gray);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.fi,.fs,.ft{background:var(–bg3);border:1px solid var(–dgray);border-radius:7px;
+padding:8px 11px;color:var(–white);font-family:var(–font);font-size:13px;width:100%;}
+.fi:focus,.fs:focus,.ft:focus{outline:none;border-color:var(–gold);}
+.ft{resize:vertical;min-height:65px;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.savebtn{padding:8px 20px;border-radius:8px;background:var(–gold);border:none;
+color:var(–bg);font-family:var(–font);font-size:13px;font-weight:700;cursor:pointer;}
+.savebtn:hover{opacity:.88;}
+.c-item{background:var(–bg2);border:1px solid var(–dgray);border-radius:9px;
+padding:10px 13px;display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;}
+.c-item:hover{border-color:var(–gold);}
+.ci{flex:1;font-size:13px;line-height:1.6;}
+.ci small{font-size:10.5px;color:var(–gray);display:block;font-family:var(–mono);}
+.cdel{width:27px;height:27px;border-radius:6px;border:1px solid var(–dgray);
+background:transparent;cursor:pointer;font-size:12px;}
+.cdel:hover{border-color:var(–coral);color:var(–coral);}
+
+/* ABOUT */
+.about-wrap{max-width:720px;margin:0 auto;padding:36px 24px 80px;}
+.about-card{background:var(–bg2);border-radius:16px;border:1px solid var(–dgray);
+padding:36px 32px;position:relative;overflow:hidden;}
+.about-card::before{content:’’;position:absolute;top:0;left:0;right:0;height:3px;
+background:linear-gradient(90deg,var(–teal),var(–purple),var(–gold));}
+.about-mono{font-family:var(–mono);font-size:10.5px;color:var(–teal);letter-spacing:1px;margin-bottom:14px;}
+.about-card h2{font-family:var(–serif);font-size:22px;font-weight:700;margin-bottom:24px;line-height:1.4;}
+.about-p{font-size:14.5px;line-height:2;color:var(–offwh);margin-bottom:20px;}
+.quote-box{background:var(–bg3);border-radius:12px;border-left:4px solid var(–gold);
+padding:20px 22px;margin-bottom:28px;}
+.quote-who{font-size:11px;font-family:var(–mono);color:var(–gold);letter-spacing:1px;margin-bottom:10px;}
+.quote-txt{font-size:17px;font-family:var(–serif);font-weight:700;line-height:1.7;color:var(–white);margin-bottom:8px;}
+.quote-src{font-size:12.5px;color:var(–gray);}
+.prof-row{margin-top:28px;padding-top:22px;border-top:1px solid var(–dgray);}
+.prof-card{display:flex;align-items:center;gap:14px;cursor:pointer;padding:12px;
+border-radius:12px;border:1px solid var(–dgray);background:var(–bg3);
+transition:border-color .2s;user-select:none;}
+.prof-card:hover{border-color:var(–teal);}
+.prof-ava{width:44px;height:44px;border-radius:50%;
+background:linear-gradient(135deg,var(–teal),var(–purple));
+display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.prof-name{font-size:14px;font-weight:700;color:var(–white);}
+.prof-dept{font-size:12px;color:var(–gray);}
+.prof-arr{color:var(–gray);font-size:13px;transition:transform .3s;margin-left:auto;}
+.contact-panel{display:none;margin-top:10px;background:var(–bg3);
+border-radius:12px;border:1px solid var(–dgray);overflow:hidden;}
+.c-link{display:flex;align-items:center;gap:14px;padding:14px 16px;
+text-decoration:none;color:var(–white);border-bottom:1px solid rgba(255,255,255,.06);
+transition:background .2s;}
+.c-link:last-child{border-bottom:none;}
+.c-link:hover{background:rgba(255,255,255,.04);}
+.c-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+justify-content:center;font-size:16px;flex-shrink:0;}
+.c-lbl{font-size:11px;color:var(–gray);margin-bottom:2px;}
+.c-val{font-size:14px;font-weight:600;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;z-index:300;
+background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;}
+.overlay.on{display:flex;}
+.modal{background:var(–bg2);border-radius:16px;padding:26px;width:min(380px,92vw);border:1px solid var(–gold);}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:14px;text-align:center;color:var(–gold);}
+.mbtns{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;}
+.cbtn{padding:7px 16px;border-radius:7px;border:1px solid var(–dgray);
+background:transparent;color:var(–gray);font-family:var(–font);font-size:12.5px;cursor:pointer;}
+.cbtn:hover{color:var(–white);}
+.pwerr{color:var(–coral);font-size:12px;margin-top:6px;display:none;}
+
+footer{background:var(–bg2);border-top:1px solid var(–dgray);padding:15px 20px;text-align:center;}
+footer p{font-size:12px;color:var(–gray);line-height:1.9;}
+footer strong{color:var(–teal);}
+footer small{font-family:var(–mono);font-size:10px;color:var(–dgray);}
+
+@media(max-width:600px){
+nav{padding:0 12px;gap:4px;}
+.nb{padding:5px 9px;font-size:11px;}
+.fg{grid-template-columns:1fr;}
+.about-card{padding:24px 18px;}
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="go('home')">🦠 기생충학및실습</div>
+  <button class="nb on" id="nb-home" onclick="go('home')">홈</button>
+  <button class="nb" id="nb-about" onclick="go('about')">제작의도</button>
+  <button class="nb adm" onclick="tryAdmin()">⚙ 관리</button>
+</nav>
+
+<!-- HOME -->
+
+<div id="pg-home" class="page on">
+  <div class="hero">
+    <div class="hero-tag">경남정보대학교 임상병리과 · 박상현 교수</div>
+    <h1>기생충학및실습<br><em>스마트 학습 앱</em></h1>
+    <p>챕터를 선택하면 강의 요약 · 핵심 포인트 · 플래시카드 · 퀴즈를 학습할 수 있습니다.</p>
+    <div id="home-stats" class="hero-stats"></div>
+  </div>
+  <div id="home-body" class="home-body"></div>
+</div>
+
+<!-- DETAIL -->
+
+<div id="pg-detail" class="page">
+  <div class="det-wrap">
+    <button class="bk" onclick="go('home')">← 목록으로</button>
+    <div class="det-hdr" id="det-hdr"></div>
+    <div class="det-tabs" id="det-tabs">
+      <button class="dtab on"  onclick="switchTab(0)">📝 강의 요약</button>
+      <button class="dtab"     onclick="switchTab(1)">⭐ 핵심 포인트</button>
+      <button class="dtab"     onclick="switchTab(2)">🃏 플래시카드</button>
+      <button class="dtab"     onclick="switchTab(3)">✏️ 퀴즈</button>
+    </div>
+    <div id="tab-0" class="dpanel on"></div>
+    <div id="tab-1" class="dpanel"></div>
+    <div id="tab-2" class="dpanel"></div>
+    <div id="tab-3" class="dpanel"></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+
+<div id="pg-about" class="page">
+  <div class="about-wrap">
+    <button class="bk" onclick="go('home')">← 홈으로</button>
+    <div class="about-card">
+      <div class="about-mono">APP INTRODUCTION</div>
+      <h2>앱 제작의도</h2>
+      <p class="about-p">
+        사랑하는 경남정보대학교 임상병리과 학생들이 처음 접하는
+        <strong style="color:var(--white)">기생충학 및 실습</strong>이라는 과목을
+        조금 더 쉽고 간편하게 학습할 수 있도록 이 앱을 개발하였습니다.
+      </p>
+      <p class="about-p" style="margin-bottom:28px;">
+        시간과 장소에 상관없이 언제 어디서나 강의 내용과 핵심 포인트를 학습하고,
+        플래시카드와 퀴즈를 통해 복습할 수 있도록 앱을 구성하였습니다.
+      </p>
+      <div class="quote-box">
+        <div class="quote-who">YOGI BERRA</div>
+        <p class="quote-txt">"끝날 때까지 끝난 것이 아니다."</p>
+        <p class="quote-src">— 전설적인 메이저리그 야구선수 요기 베라</p>
+      </div>
+      <p class="about-p" style="margin-bottom:0;">
+        서로 다른 출발점에서 시작하였지만, 결국에는 여러분의 꿈을 이룰 수 있도록
+        교수자로서 최선을 다하겠습니다.
+      </p>
+      <div class="prof-row">
+        <div class="prof-card" onclick="toggleContact()" id="prof-card">
+          <div class="prof-ava">👨‍🏫</div>
+          <div>
+            <div class="prof-name">박상현 교수</div>
+            <div class="prof-dept">경남정보대학교 임상병리과</div>
+          </div>
+          <div class="prof-arr" id="prof-arr">▼</div>
+        </div>
+        <div class="contact-panel" id="contact-panel">
+          <a class="c-link" href="tel:010-9262-2432">
+            <div class="c-icon" style="background:rgba(0,201,177,.15);">📞</div>
+            <div><div class="c-lbl">전화</div><div class="c-val">010-9262-2432</div></div>
+          </a>
+          <a class="c-link" href="mailto:parksh@kit.ac.kr">
+            <div class="c-icon" style="background:rgba(96,165,250,.15);">✉️</div>
+            <div><div class="c-lbl">이메일</div><div class="c-val">parksh@kit.ac.kr</div></div>
+          </a>
+          <a class="c-link" href="https://www.instagram.com/capboy2000?igsh=MTF6NGE4ejlxenVxeQ%3D%3D&utm_source=qr" target="_blank" rel="noopener">
+            <div class="c-icon" style="background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(244,114,182,.2));">📸</div>
+            <div><div class="c-lbl">교수 인스타그램</div><div class="c-val">@capboy2000</div></div>
+          </a>
+          <a class="c-link" href="https://www.instagram.com/kit_blc?igsh=d3ZjdzViNzN5a2w5" target="_blank" rel="noopener">
+            <div class="c-icon" style="background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(96,165,250,.2));">🏫</div>
+            <div><div class="c-lbl">학과 인스타그램</div><div class="c-val">@kit_blc</div></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+
+<div id="pg-admin" class="page">
+  <div class="adm-wrap">
+    <div class="adm-hdr">
+      <h2>⚙ 콘텐츠 관리</h2>
+      <button class="logout" onclick="adminLogout()">← 로그아웃</button>
+    </div>
+    <div class="atabs">
+      <button class="atab on" onclick="showATab(0)">챕터 공개 설정</button>
+      <button class="atab"    onclick="showATab(1)">플래시카드 관리</button>
+    </div>
+    <div id="ap-0" class="apanel on">
+      <p style="font-size:13px;color:var(--gray);margin-bottom:12px;">토글을 켜면 학생 화면에 즉시 공개됩니다.</p>
+      <div id="vis-list"></div>
+    </div>
+    <div id="ap-1" class="apanel">
+      <div id="card-list"></div>
+      <div class="aform">
+        <h4>+ 플래시카드 추가</h4>
+        <div class="fg">
+          <div class="frow"><label>챕터</label><select class="fs" id="nc-cat"></select></div>
+          <div class="frow"><label>앞면(질문)</label><input class="fi" id="nc-q" placeholder="질문 입력"></div>
+        </div>
+        <div class="frow"><label>뒷면(답변)</label><textarea class="ft" id="nc-a" placeholder="답변 입력"></textarea></div>
+        <button class="savebtn" onclick="addCard()">추가하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 로그인 모달 -->
+
+<div class="overlay" id="ov-login">
+  <div class="modal">
+    <h3>🔐 관리자 로그인</h3>
+    <p style="font-size:12.5px;color:var(--gray);text-align:center;margin-bottom:16px;">교수자 전용 페이지입니다.</p>
+    <div class="frow">
+      <label>비밀번호</label>
+      <input class="fi" type="password" id="pw-input" placeholder="비밀번호 입력"
+             onkeydown="if(event.key==='Enter')checkPw()">
+    </div>
+    <p class="pwerr" id="pw-err">❌ 비밀번호가 틀렸습니다.</p>
+    <div class="mbtns">
+      <button class="cbtn" onclick="closeOv()">취소</button>
+      <button class="savebtn" onclick="checkPw()">로그인</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><strong>경남정보대학교 임상병리과</strong><br>
+  박상현 교수 제작 및 배포 · Medical Parasitology &amp; Laboratory<br>
+  <small>© 2026 Dept. of Medical Laboratory Science, KIT</small></p>
+</footer>
+
+<script>
+const CHAPTERS = [
+{id:'c01',part:'Part 1. 기생충학',week:'1주차',title:'기생충학 총론',sub:'기생생활·숙주분류·명명법·감염경로',color:'var(--teal)',visible:true,
+summary:[
+  '기생충학은 기생충과 숙주 간의 상호작용을 연구하는 학문입니다. <strong>기생생활(Parasitism)</strong>은 한 생물이 다른 생물에 일시적 혹은 영구적으로 거주하며 영양분을 탈취하는 관계입니다.',
+  '기생충은 기생 부위에 따라 <strong>내부기생충</strong>과 <strong>외부기생충</strong>으로 나뉩니다. 숙주는 성충이 기생하는 <strong>종숙주</strong>, 유충이 기생하는 <strong>중간숙주</strong>, 인체 감염의 원천이 되는 <strong>보유숙주</strong> 등으로 분류됩니다.',
+  '기생충의 명명은 <strong>이명법</strong>을 따르며, 속명과 종명을 <em>이탤릭체</em>로 표기합니다. 속명 첫 글자는 대문자, 종명은 소문자입니다. 예: <em>Ascaris lumbricoides</em> (회충).',
+  '감염 경로에는 경구 감염, 경피 감염, 곤충 매개 감염 등이 있으며, 진단 시 의심 부위에 따라 대변·혈액·요·객담 등을 검사합니다. 기생충 감염 시 <strong>IgE 항체</strong>가 증가하며 <strong>호산구</strong>도 증가합니다.',
+],
+points:[
+  '<em>종숙주(Final host)</em>: 성충 기생·<strong>유성생식</strong>이 이루어지는 숙주',
+  '<em>중간숙주(Intermediate host)</em>: 유충 기생·<strong>무성생식</strong>이 일어나는 숙주',
+  '<em>보유숙주(Reservoir host)</em>: 인수공통감염에서 인체 감염의 원천이 되는 동물',
+  '<em>매개체(Vector)</em>: 기생충을 다른 숙주에게 옮겨주는 운반체 (모기, 진드기 등)',
+  '명명법: <em>Genus species</em> — 속명 대문자·종명 소문자, <strong>이탤릭체</strong> 필수',
+  '즉시형 알레르기 관련 면역글로불린: <strong>IgE</strong> (+ 호산구 증가)',
+  '원충 영양형 관찰에 최적 방법: <strong>직접도말법</strong>',
+],
+quizzes:[
+  {q:'기생충의 성충이 기생하거나 유성생식이 일어나는 숙주는?',opts:['중간숙주','보유숙주','종숙주','매개체'],ans:2,exp:'종숙주(Final host)는 성충이 기생하거나 유성생식이 이루어지는 숙주입니다. 중간숙주는 유충이 기생합니다.'},
+  {q:'유충이 기생하거나 무성생식이 일어나는 숙주는?',opts:['종숙주','중간숙주','보유숙주','매개체'],ans:1,exp:'중간숙주(Intermediate host)는 유충이 기생하거나 무성생식이 일어나는 숙주입니다.'},
+  {q:'사람과 동물이 공통으로 감염되는 기생충의 감염원이 되는 동물 숙주는?',opts:['종숙주','중간숙주','보유숙주','매개체'],ans:2,exp:'보유숙주(Reservoir host)는 인수공통감염에서 인체 감염의 원천이 되는 동물입니다.'},
+  {q:'기생충의 학명을 표기할 때 사용하는 명명법은?',opts:['삼명법','이명법','일명법','속명법'],ans:1,exp:'이명법(Binominal nomenclature)은 속명+종명으로 학명을 표기하는 방법입니다.'},
+  {q:'기생충 학명 표기 시 반드시 사용해야 하는 글자체는?',opts:['고딕체','볼드체','이탤릭체','밑줄체'],ans:2,exp:'기생충 학명은 이탤릭체로 표기하며, 속명 첫 글자는 대문자, 종명은 소문자입니다.'},
+  {q:'숙주를 거치지 않고 직접 전파되는 생활사는?',opts:['간접생활사','복잡생활사','직접생활사','이상생활사'],ans:2,exp:'직접생활사는 중간숙주 없이 충란·유충이 직접 최종 숙주에게 감염되는 방식입니다.'},
+  {q:'기생충이 숙주에게 미치는 물리적 영향의 예로 맞는 것은?',opts:['항체 생성','IgE 증가','장폐쇄·압박','호산구 증가'],ans:2,exp:'회충 등이 대량 기생할 경우 장을 물리적으로 막는 장폐쇄를 일으킬 수 있습니다.'},
+  {q:'기생충 감염의 즉시형 알레르기 반응과 관련된 면역글로불린은?',opts:['IgA','IgM','IgG','IgE'],ans:3,exp:'기생충 감염 시 IgE 항체가 증가하며 비만세포와 결합하여 즉시형 알레르기 반응을 일으킵니다.'},
+  {q:'기생충 감염 예방을 위해 조절해야 할 전파인자는?',opts:['항체 수준','중간숙주 및 매개체','숙주의 나이','기온'],ans:1,exp:'중간숙주와 매개체를 제거하거나 접촉을 차단하는 것이 기생충 감염 예방의 핵심입니다.'},
+  {q:'대변 검사 시 기생충의 영양형을 관찰하기 가장 좋은 방법은?',opts:['집란법','MGL법','직접도말법','스톨씨법'],ans:2,exp:'직접도말법은 신선한 대변을 생리식염수에 직접 도말하여 원충 영양형의 운동성을 관찰하는 데 적합합니다.'},
+]},
+{id:'c02',part:'Part 2. 원충류',week:'2주차',title:'근족충류 (Rhizopoda)',sub:'이질아메바·자유생활아메바',color:'var(--purple)',visible:true,
+summary:[
+  '위족을 이용해 운동하는 단세포 생물을 다룹니다. <strong>이질아메바(<em>E. histolytica</em>)</strong>는 영양형 시기에 숙주의 <strong>적혈구를 탐식</strong>하며, 성숙 포낭은 <strong>4개의 핵</strong>을 가집니다.',
+  '이질아메바는 점혈변(아메바성 이질)을 유발하며, 혈행성으로 전이되어 <strong>아메바성 간농양</strong>을 일으킬 수 있습니다.',
+  '<strong>대장아메바</strong>는 성숙 포낭에 8개의 핵이 있으며 병원성이 거의 없어 이질아메바와의 감별이 중요합니다.',
+  '자유생활 아메바인 <strong>파울러자유아메바</strong>는 수영 중 비강을 통해 침입하여 치명적인 원발성 아메바성 뇌수막염을 일으킵니다. <strong>가시아메바</strong>는 콘택트렌즈 착용자에게 각막염을 유발합니다.',
+],
+points:[
+  '<em>이질아메바 영양형</em>: 위족으로 이동, <strong>적혈구 탐식</strong>이 가장 큰 특징',
+  '<em>이질아메바 성숙 포낭</em>: 핵 <strong>4개</strong>, 요오드 염색 시 글리코겐 공포 관찰',
+  '<em>대장아메바 성숙 포낭</em>: 핵 <strong>8개</strong>, 병원성 없음 → 이질아메바와 감별 핵심',
+  '<em>파울러자유아메바</em>: 수영 중 <strong>코</strong>를 통해 감염, 원발성 아메바성 뇌수막염(PAM)',
+  '<em>가시아메바</em>: <strong>콘택트렌즈</strong> 관련 각막염',
+  '이질아메바 합병증: 아메바성 <strong>간농양</strong> (혈행성 전이)',
+],
+quizzes:[
+  {q:'이질아메바 영양형의 가장 큰 형태적 특징은?',opts:['백혈구 탐식','혈소판 탐식','적혈구 탐식','상피세포 탐식'],ans:2,exp:'이질아메바 영양형(Trophozoite)은 적혈구를 탐식하며, 이것이 다른 아메바와 구별되는 핵심 특징입니다.'},
+  {q:'이질아메바 성숙 포낭의 핵 개수는?',opts:['1개','2개','4개','8개'],ans:2,exp:'이질아메바 성숙 포낭은 4개의 핵을 가집니다. 대장아메바는 8개이므로 감별에 중요합니다.'},
+  {q:'대장아메바 성숙 포낭의 핵 개수는?',opts:['2개','4개','6개','8개'],ans:3,exp:'대장아메바 성숙 포낭은 8개의 핵을 가지며 병원성이 없습니다.'},
+  {q:'수영 중 코를 통해 감염되어 뇌수막염을 일으키는 아메바는?',opts:['이질아메바','대장아메바','파울러자유아메바','가시아메바'],ans:2,exp:'파울러자유아메바(Naegleria fowleri)는 온수 수영장 등에서 비강을 통해 감염되어 원발성 아메바성 뇌수막염(PAM)을 일으킵니다.'},
+  {q:'콘택트렌즈 사용자에게 각막염을 유발할 수 있는 아메바는?',opts:['이질아메바','파울러자유아메바','가시아메바','대장아메바'],ans:2,exp:'가시아메바(Acanthamoeba)는 콘택트렌즈 관리 불량 시 각막염을 일으킬 수 있습니다.'},
+  {q:'이질아메바가 간으로 전이되어 일으키는 합병증은?',opts:['간경변','아메바성 간농양','담낭염','간흡충증'],ans:1,exp:'이질아메바는 혈행성으로 전이되어 아메바성 간농양을 일으키며, 이것이 가장 흔한 장외 합병증입니다.'},
+  {q:'아메바의 포낭 형성을 무엇이라 하는가?',opts:['탈낭(Excystation)','포낭형성(Encystment)','분열(Schizogony)','접합(Conjugation)'],ans:1,exp:'Encystment(포낭형성)는 아메바가 환경에 적응하여 포낭을 형성하는 과정입니다.'},
+  {q:'위족을 내어 활발히 움직이는 아메바의 발육 단계는?',opts:['포낭형','영양형','분열체','배낭형'],ans:1,exp:'영양형(Trophozoite)은 활발하게 운동하고 섭식하는 아메바의 활성 단계입니다.'},
+  {q:'요오드 염색 시 포낭 내에서 관찰되는 에너지 저장 물질은?',opts:['지방 공포','글리코겐 공포','RNA 과립','크로마토이드 소체'],ans:1,exp:'요오드 염색 시 포낭 내 글리코겐 공포가 갈색으로 염색되어 관찰됩니다.'},
+  {q:'이핵아메바(Dientamoeba fragilis)의 특징적인 핵 개수는?',opts:['1개','2개','4개','8개'],ans:1,exp:'이핵아메바는 영양형에 핵이 2개(이핵)인 것이 특징이며 포낭형이 없습니다.'},
+]},
+{id:'c03',part:'Part 2. 원충류',week:'3주차',title:'편모충류 (Mastigophora)',sub:'람블편모충·질편모충·파동편모충',color:'var(--blue)',visible:false,
+summary:[
+  '하나 이상의 편모를 가진 원충들입니다. <strong>람블편모충</strong>은 서양배 모양으로 2개의 핵과 흡반이 있으며, 감염 시 지방 흡수 장애로 인한 <strong>지방변</strong>을 유발합니다.',
+  '<strong>질편모충</strong>은 포낭형 없이 <strong>영양형만 존재</strong>하며 주로 성접촉을 통해 전파되는 성병의 원인균입니다.',
+  '<strong>로데시아/감비아 파동편모충</strong>은 체체파리에 의해 매개되어 아프리카 수면병을 일으킵니다. <strong>크루스파동편모충</strong>은 흡혈 노린재 매개로 샤가스병을 유발합니다.',
+  '내장리슈만편모충증은 모래파리에 의해 매개되며 <strong>칼라아자르(Kala-azar)</strong>라고도 합니다.',
+],
+points:[
+  '<em>람블편모충</em>: 서양배 모양, 핵 <strong>2개</strong>, 흡반 2개, 낙엽 낙하 운동성',
+  '<em>람블편모충 감염 증상</em>: 지방 흡수 장애 → <strong>지방변</strong>',
+  '<em>질편모충</em>: <strong>포낭형 없음</strong>, 영양형만, 성접촉 전파',
+  '<em>로데시아/감비아 파동편모충</em>: 체체파리 매개 → <strong>아프리카 수면병</strong>',
+  '<em>크루스파동편모충</em>: 흡혈 노린재 매개 → <strong>샤가스병</strong>',
+  '<em>내장리슈만편모충증</em>: 모래파리 매개 → <strong>칼라아자르(Kala-azar)</strong>',
+],
+quizzes:[
+  {q:'2개의 흡반과 편모를 가지며 낙엽이 떨어지는 듯한 운동을 하는 원충은?',opts:['질편모충','람블편모충','대장섬모충','이질아메바'],ans:1,exp:'람블편모충(Giardia lamblia)은 서양배 모양에 2개의 핵과 흡반을 가지며 특유의 낙엽 낙하 운동을 합니다.'},
+  {q:'람블편모충 감염 시 나타나는 특징적인 대변 소견은?',opts:['혈변','점액변','지방변','수양변'],ans:2,exp:'람블편모충은 소장에 기생하며 지방 흡수를 방해하여 지방변(Steatorrhea)을 유발합니다.'},
+  {q:'포낭 단계가 없고 영양형으로만 존재하는 비뇨생식기 기생 원충은?',opts:['람블편모충','구강편모충','질편모충','파울러자유아메바'],ans:2,exp:'질편모충(Trichomonas vaginalis)은 포낭형이 없어 오직 영양형만 존재하며 성접촉으로 전파됩니다.'},
+  {q:'질편모충의 주요 감염 경로는?',opts:['경구감염','경피감염','성접촉','곤충매개'],ans:2,exp:'질편모충은 포낭형이 없어 외부 환경에서 생존이 어려우며 주로 성접촉(직접접촉)으로 전파됩니다.'},
+  {q:'아프리카 수면병을 매개하는 곤충은?',opts:['모기','체체파리','흡혈노린재','모래파리'],ans:1,exp:'체체파리(Tsetse fly)는 아프리카 수면병의 원인균인 파동편모충을 매개합니다.'},
+  {q:'샤가스병을 일으키는 원충의 이름은?',opts:['람블편모충','로데시아파동편모충','크루스파동편모충','내장리슈만편모충'],ans:2,exp:'크루스파동편모충(Trypanosoma cruzi)은 흡혈 노린재에 의해 매개되며 샤가스병을 일으킵니다.'},
+  {q:'람블편모충을 검출하기 위해 사용하는 특수 검사법은?',opts:['직접도말법','스카치테이프법','Entero-test','MGL법'],ans:2,exp:'Entero-test(장선검사법)는 실을 삼켜 십이지장 내용물을 채취하여 람블편모충을 검출하는 방법입니다.'},
+  {q:'질편모충 검사를 위해 채취하는 검체로 가장 적합한 것은?',opts:['대변','혈액','질 분비물·요도 분비물','객담'],ans:2,exp:'질편모충은 비뇨생식기에 기생하므로 질 분비물, 요도 분비물 또는 요 침사를 검체로 사용합니다.'},
+  {q:'편모충류 중 구강 내에 기생하는 종은?',opts:['람블편모충','질편모충','구강편모충','대장편모충'],ans:2,exp:'구강편모충(Trichomonas tenax)은 구강 내, 특히 치은 사이에 기생합니다.'},
+  {q:'내장리슈만편모충증을 다른 말로 무엇이라 하는가?',opts:['샤가스병','수면병','칼라아자르','오리엔트 종기'],ans:2,exp:'내장리슈만편모충증(Visceral leishmaniasis)은 칼라아자르(Kala-azar)라고도 하며 모래파리에 의해 매개됩니다.'},
+]},
+{id:'c04',part:'Part 2. 원충류',week:'4주차',title:'포자충류 (Sporozoa)',sub:'말라리아·톡소포자충·작은와포자충',color:'var(--gold)',visible:false,
+summary:[
+  '일정한 운동기관이 없고 복잡한 생활사를 가진 종들입니다. <strong>말라리아(열원충)</strong>는 모기가 종숙주이며 사람은 중간숙주입니다. 모기 타액선의 <strong>포자소체</strong>가 혈액으로 유입되어 간세포와 적혈구에서 증식합니다.',
+  '<strong>열대열원충</strong>은 <strong>바나나/초승달 모양 생식모세포</strong>를 형성하며 가장 치명적입니다. 삼일열원충 감염 적혈구에서는 <strong>Schüffner 반점</strong>이 관찰됩니다.',
+  '<strong>톡소포자충</strong>은 고양이가 종숙주이며 임신 중 감염 시 태아에게 뇌수종·실명 등의 선천성 장애를 일으킵니다.',
+  '<strong>작은와포자충</strong>은 면역 저하자(AIDS 등)에게 심한 설사를 유발합니다. 말라리아 검사에는 <strong>Giemsa 염색</strong>이 사용됩니다.',
+],
+points:[
+  '<em>말라리아 감염형</em>: <strong>포자소체(Sporozoite)</strong> — 모기 타액선에서 인체로 주입',
+  '<em>열대열원충 식별</em>: <strong>바나나/초승달 모양</strong> 생식모세포',
+  '<em>삼일열원충</em>: 감염 적혈구에서 <strong>Schüffner 반점</strong> 관찰',
+  '<em>말라리아 채혈 시기</em>: <strong>발열 직전</strong>(혈중 원충 수 최대)',
+  '<em>톡소포자충 종숙주</em>: <strong>고양이(고양이과 동물)</strong>',
+  '<em>말라리아 염색법</em>: <strong>Giemsa</strong> 또는 Wright 염색',
+  '<em>작은와포자충</em>: 면역 결핍 환자에서 <strong>치명적 설사</strong>',
+],
+quizzes:[
+  {q:'말라리아 원충이 인체로 침입할 때의 감염형 형태는?',opts:['분열소체','생식모세포','포자소체','난모세포'],ans:2,exp:'포자소체(Sporozoite)는 모기의 타액선에 있다가 흡혈 시 인체로 주입되는 말라리아 감염형입니다.'},
+  {q:'열대열원충의 가장 특징적인 형태적 감별 포인트는?',opts:['Schüffner 반점','크기가 매우 큰 적혈구','바나나/초승달 모양 생식모세포','Maurer 반점만'],ans:2,exp:'열대열원충(P. falciparum)은 바나나 또는 초승달 모양의 생식모세포(Gametocyte)가 특징이며 가장 위험합니다.'},
+  {q:'말라리아 검사를 위해 혈액을 채취하기 가장 좋은 시기는?',opts:['발열 후 1시간','발열 직전','해열 후','무증상기'],ans:1,exp:'발열 직전에 혈중 원충 밀도가 가장 높으므로 이 시기에 채혈하는 것이 진단에 유리합니다.'},
+  {q:'삼일열원충에 감염된 적혈구에서 관찰되는 붉은 반점의 이름은?',opts:['Maurer 반점','Ziemann 반점','Schüffner 반점','James 반점'],ans:2,exp:'Schüffner 반점(Schüffner\'s dots)은 삼일열원충과 난형열원충에 감염된 적혈구에서 관찰되는 특징적 반점입니다.'},
+  {q:'톡소포자충의 종숙주는?',opts:['개','돼지','고양이','소'],ans:2,exp:'고양이(고양이과 동물)가 톡소포자충(Toxoplasma gondii)의 종숙주이며 대변으로 난포낭이 배출됩니다.'},
+  {q:'임산부가 톡소포자충에 감염 시 태아에게 미칠 수 있는 영향은?',opts:['황달','뇌수종·실명 등 선천성 장애','선천성 심장기형만','폐렴'],ans:1,exp:'임신 중 감염 시 태반을 통해 태아에게 전달되어 뇌수종, 망막염, 실명, 뇌석회화 등을 일으킵니다.'},
+  {q:'말라리아 원충이 적혈구 내에서 처음 형성하는 반지 모양은?',opts:['분열체','영양형','윤상체(Ring form)','생식모세포'],ans:2,exp:'윤상체(Ring form)는 분열소체가 적혈구에 침입한 직후 형성되는 반지 모양으로 진단에 중요합니다.'},
+  {q:'고양이 대변을 통해 배출되는 톡소포자충의 형태는?',opts:['포자소체','난포낭(Oocyst)','포낭(Cyst)','영양형'],ans:1,exp:'고양이 대변에서 배출되는 것은 난포낭(Oocyst)이며 환경에서 성숙하여 감염력을 갖게 됩니다.'},
+  {q:'면역 결핍 환자(AIDS 등)에서 치명적인 설사를 일으키는 포자충은?',opts:['열대열원충','톡소포자충','작은와포자충','대장섬모충'],ans:2,exp:'작은와포자충(Cryptosporidium parvum)은 면역 정상인에게는 자연치유되지만 면역 결핍 환자에서 치명적인 만성 설사를 일으킵니다.'},
+  {q:'말라리아 진단을 위해 혈액 도말 시 사용하는 대표적인 염색법은?',opts:['H&E 염색','PAS 염색','Giemsa 염색','Gram 염색'],ans:2,exp:'Giemsa 염색은 말라리아 원충 진단의 표준 염색법입니다.'},
+]},
+{id:'c05',part:'Part 2. 원충류',week:'5주차',title:'섬모충류 (Ciliata)',sub:'대장섬모충',color:'var(--mint)',visible:false,
+summary:[
+  '몸 표면에 섬모가 있는 원충으로, 인체 기생 원충 중 가장 큰 <strong>대장섬모충</strong>이 대표적입니다. 돼지가 주요 보유숙주이며 대장에 기생하여 이질과 유사한 증상을 일으킵니다.',
+  '세포 내에 소시지(콩) 모양의 <strong>대핵(Macronucleus)</strong>과 작은 원형의 <strong>소핵(Micronucleus)</strong>을 동시에 가지고 있는 것이 특징입니다.',
+  '영양형 앞부분에 <strong>세포구(Cytostome)</strong>가 있으며, 포낭형이 감염형으로 경구 감염됩니다. 영양형은 외부 환경 배출 후 곧 사멸합니다.',
+],
+points:[
+  '<em>대장섬모충</em>: 인체 기생 원충 중 <strong>최대 크기</strong>(최대 200μm)',
+  '<em>보유숙주</em>: <strong>돼지</strong>와의 접촉이 주요 감염원',
+  '<em>핵 구조</em>: 소시지/콩 모양 <strong>대핵</strong> + 원형 소핵',
+  '<em>운동기관</em>: 몸 전체를 덮은 <strong>섬모</strong>',
+  '<em>감염형</em>: <strong>포낭형</strong> (경구 감염)',
+  '<em>특이 구조</em>: 영양형 앞부분 = <strong>세포구(Cytostome)</strong>',
+],
+quizzes:[
+  {q:'인체 기생 원충 중 크기가 가장 큰 종의 이름은?',opts:['이질아메바','람블편모충','대장섬모충','열대열원충'],ans:2,exp:'대장섬모충(Balantidium coli)은 인체 기생 원충 중 최대 크기(최대 200μm)를 자랑합니다.'},
+  {q:'대장섬모충의 주요 보유숙주는?',opts:['소','닭','돼지','개'],ans:2,exp:'돼지가 대장섬모충의 주요 보유숙주이며 돼지 분변에 오염된 물이나 식품으로 인체 감염이 이루어집니다.'},
+  {q:'대장섬모충이 세포 내에 가지고 있는 두 종류의 핵 이름은?',opts:['전핵·후핵','외핵·내핵','대핵·소핵','핵·핵소체'],ans:2,exp:'대장섬모충은 소시지 모양의 대핵(Macronucleus)과 작은 원형의 소핵(Micronucleus)을 모두 가집니다.'},
+  {q:'대장섬모충의 운동 기관은?',opts:['위족','편모','섬모','운동기관 없음'],ans:2,exp:'대장섬모충은 섬모충류(Ciliata)에 속하며 몸 전체를 덮은 섬모를 이용하여 운동합니다.'},
+  {q:'대장섬모충이 주로 기생하는 인체 부위는?',opts:['소장','위','대장','간'],ans:2,exp:'대장섬모충은 대장(특히 결장)에 기생하며 심한 경우 장벽을 침범하여 이질 증상을 유발합니다.'},
+  {q:'대장섬모충의 대핵 모양은?',opts:['원형','삼각형','소시지(콩) 모양','별 모양'],ans:2,exp:'대핵(Macronucleus)은 소시지 또는 콩 모양으로 대장섬모충의 특징적 형태입니다.'},
+  {q:'대장섬모충의 감염형 형태는?',opts:['영양형','분열체','포낭형','생식모세포'],ans:2,exp:'포낭형이 감염형이며 오염된 물이나 음식을 통해 경구 감염됩니다.'},
+  {q:'대장섬모충 영양형의 앞부분에 있는 입과 같은 구조의 명칭은?',opts:['흡반','두절','세포구(Cytostome)','구판'],ans:2,exp:'세포구(Cytostome)는 대장섬모충 영양형의 앞쪽에 위치한 입 구조로 먹이 섭취에 사용됩니다.'},
+  {q:'대장섬모충증의 진단에 가장 흔히 쓰이는 검체는?',opts:['혈액','소변','대변','객담'],ans:2,exp:'대장에 기생하므로 대변 검사(직접도말법 등)가 진단에 이용됩니다.'},
+  {q:'대장섬모충 영양형은 대변 배출 후 외부 환경에서 어떻게 되는가?',opts:['수주간 생존','포낭으로 변함','곧 사멸한다','분열 증식한다'],ans:2,exp:'대장섬모충 영양형은 환경 저항성이 낮아 외부 배출 후 곧 사멸합니다. 전파는 포낭형에 의해 이루어집니다.'},
+]},
+{id:'c06',part:'Part 3. 연충류',week:'6주차',title:'선충류 (Nematoda)',sub:'회충·요충·구충·편충·고래회충',color:'var(--orange)',visible:false,
+summary:[
+  '원통형의 길쭉한 벌레로 암수 딴몸이며 성충이 되기까지 보통 <strong>4번의 탈피</strong>를 거칩니다. <strong>회충</strong>은 소장에 기생하며 폐순환(Loeffler 증후군)을 거치는 생활사를 가집니다.',
+  '<strong>요충</strong>은 야간에 항문 주위로 나와 산란하여 가려움증을 유발하고 <strong>스카치테이프법</strong>으로 진단합니다. 충란은 한쪽이 평평한 감씨 모양입니다.',
+  '<strong>구충(십이지장충)</strong>은 장 점막에서 흡혈하여 <strong>빈혈</strong>을 일으키며 유충이 피부를 뚫고 들어갈 때 <strong>채독증(Ground itch)</strong>이 나타납니다.',
+  '<strong>편충</strong>은 양쪽 끝에 극마개가 있는 항아리 모양 충란이 특징입니다. <strong>고래회충(Anisakis)</strong>은 바다 생선 생식 후 급성 복통을 유발합니다.',
+],
+points:[
+  '<em>요충 충란</em>: <strong>한쪽 면이 평평한 감씨 모양</strong> → 스카치테이프법 진단',
+  '<em>편충 충란</em>: 양끝에 <strong>극마개</strong>가 있는 항아리/레몬 모양',
+  '<em>회충 충란</em>: <strong>3층 구조</strong> 난각 (외막·중간막·내막)',
+  '<em>구충 감염</em>: <strong>경피 감염</strong> → 채독증(Ground itch)',
+  '<em>구충 감별</em>: 두비니구충(치아 2쌍) vs 아메리카구충(치판 1쌍)',
+  '<em>선충 탈피 횟수</em>: <strong>4회</strong>',
+  '<em>고래회충(Anisakis)</em>: 바다 생선 날로 먹으면 급성 복통',
+],
+quizzes:[
+  {q:'한쪽 면이 평평한 감씨 모양의 충란을 가진 선충은?',opts:['회충','편충','요충','구충'],ans:2,exp:'요충(Enterobius vermicularis) 충란은 한쪽이 평평한 감씨(D자) 모양이 특징이며 항문주위 도말법으로 검출합니다.'},
+  {q:'양쪽 끝에 극마개(Mucoid plug)가 있는 항아리 모양 충란을 가진 선충은?',opts:['요충','회충','편충','구충'],ans:2,exp:'편충(Trichuris trichiura) 충란은 항아리(레몬) 모양이며 양끝에 투명한 극마개가 있는 것이 특징입니다.'},
+  {q:'회충 충란의 난각은 몇 층 구조로 되어 있는가?',opts:['1층','2층','3층','4층'],ans:2,exp:'회충(Ascaris lumbricoides) 수정충란은 외막(단백막)·중간막(키틴막)·내막(지질막)의 3층 구조입니다.'},
+  {q:'요충 진단을 위해 항문 주위에 테이프를 붙여 검사하는 방법은?',opts:['직접도말법','MGL법','스카치테이프법','스톨씨법'],ans:2,exp:'스카치테이프법(셀로판 테이프법)은 아침 기상 직후 세수 전에 항문 주위에서 채취하는 요충 표준 진단법입니다.'},
+  {q:'장 점막에서 흡혈하여 철결핍성 빈혈을 일으키는 선충류는?',opts:['회충','요충','편충','구충(십이지장충)'],ans:3,exp:'구충(십이지장충, Hookworm)은 소장 점막에 부착하여 흡혈하며 지속적인 출혈로 철결핍성 빈혈을 일으킵니다.'},
+  {q:'구충의 유충이 피부를 뚫고 들어갈 때 생기는 피부염은?',opts:['Loeffler 증후군','채독증(Ground itch)','드라쿤쿨루스증','피부유충이행증'],ans:1,exp:'채독증(Ground itch)은 구충 유충이 피부를 뚫고 침입할 때 발생하는 가려움증과 발진입니다.'},
+  {q:'바다 생선을 날로 먹은 후 급성 위통을 일으키는 기생충은?',opts:['간흡충','광절열두조충','고래회충(아니사키스)','폐흡충'],ans:2,exp:'고래회충(Anisakis)은 고등어·오징어 등 바다 생선의 유충으로 날생선 섭취 시 위벽을 뚫어 급성 복통을 일으킵니다.'},
+  {q:'선충류가 성충이 되기까지 거치는 탈피 횟수는?',opts:['2회','3회','4회','5회'],ans:2,exp:'선충류는 유충에서 성충이 되기까지 총 4회의 탈피(Molting)를 거칩니다.'},
+  {q:'유충이 폐를 통과할 때 기침과 가래를 동반하는 현상은?',opts:['채독증','Loeffler 증후군','피부유충이행증','아나필락시스'],ans:1,exp:'Loeffler 증후군은 회충·구충 등 유충이 폐를 통과할 때 나타나는 호산구성 폐렴으로 기침·가래·호흡곤란이 동반됩니다.'},
+  {q:'인체 기생 선충 중 크기가 가장 큰 것은?',opts:['요충','편충','구충','회충'],ans:3,exp:'회충(Ascaris lumbricoides)은 인체 기생 선충 중 가장 크며 성충 길이가 15~35cm에 달합니다.'},
+]},
+{id:'c07',part:'Part 3. 연충류',week:'7주차',title:'흡충류 (Trematoda)',sub:'간흡충·폐흡충·주혈흡충',color:'var(--lime)',visible:false,
+summary:[
+  '납작한 나뭇잎 모양이며 대개 <strong>자웅동체</strong>입니다(주혈흡충 제외). <strong>간흡충</strong>은 왜우렁이(제1중간숙주)와 민물고기(제2중간숙주)를 통해 감염되며 담관에 기생합니다.',
+  '<strong>폐흡충</strong>은 다슬기(제1중간숙주)와 가재·게(제2중간숙주)를 통해 감염되며 <strong>쇠녹물색 객담</strong>이 특징입니다.',
+  '<strong>주혈흡충</strong>은 흡충 중 유일한 자웅이체로 <strong>경피 감염</strong>되며 혈관 내에 기생합니다.',
+  '간흡충란은 <strong>어깨(Shouldering)</strong>와 난개(뚜껑)가 있는 아주 작은 충란이 특징입니다. 흡충의 감염형은 <strong>피낭유충(Metacercaria)</strong>입니다.',
+],
+points:[
+  '<em>간흡충 중간숙주</em>: 제1 = <strong>왜우렁이</strong>, 제2 = 민물고기(참붕어·잉어 등)',
+  '<em>간흡충란</em>: <strong>어깨(Shouldering)</strong> + 난개(뚜껑) 있는 아주 작은 충란',
+  '<em>폐흡충 중간숙주</em>: 제1 = <strong>다슬기</strong>, 제2 = 가재·게',
+  '<em>폐흡충 특징</em>: <strong>쇠녹물색 객담</strong>, 객담 검사로 진단',
+  '<em>주혈흡충</em>: 흡충 중 유일한 <strong>자웅이체</strong>, 경피 감염',
+  '<em>만손주혈흡충란</em>: <strong>측방소극</strong> / 방광주혈흡충란: 종말소극(소변 배출)',
+  '<em>흡충 감염형</em>: <strong>피낭유충(Metacercaria)</strong>',
+],
+quizzes:[
+  {q:'민물고기를 날로 먹었을 때 감염되는 대표적인 흡충은?',opts:['폐흡충','요코가와흡충','간흡충','주혈흡충'],ans:2,exp:'간흡충(Clonorchis sinensis)은 민물고기를 날로 먹었을 때 감염되며 담관에 기생하여 담관염·간경변 등을 일으킵니다.'},
+  {q:'흡충류 중 유일하게 암수가 따로 있는(자웅이체) 종은?',opts:['간흡충','폐흡충','요코가와흡충','주혈흡충'],ans:3,exp:'주혈흡충(Schistosoma)은 흡충 중 유일하게 자웅이체(암수 딴몸)이며 암컷이 수컷의 포궁 내에 위치합니다.'},
+  {q:'가재나 게를 생식했을 때 감염되며 쇠녹물색 가래를 유발하는 흡충은?',opts:['간흡충','폐흡충','주혈흡충','요코가와흡충'],ans:1,exp:'폐흡충(Paragonimus westermani)은 폐에 기생하며 쇠녹물색(혈성) 가래가 특징적 증상입니다.'},
+  {q:'간흡충의 제1 중간숙주는?',opts:['다슬기','왜우렁이','우렁이','고둥'],ans:1,exp:'간흡충의 제1 중간숙주는 왜우렁이이며 제2 중간숙주는 민물고기(참붕어·잉어·피라미 등)입니다.'},
+  {q:'폐흡충의 제1 중간숙주는?',opts:['왜우렁이','다슬기','우렁이','가재'],ans:1,exp:'폐흡충의 제1 중간숙주는 다슬기이며 제2 중간숙주는 가재·게 등의 갑각류입니다.'},
+  {q:'간흡충란의 특징으로 뚜껑 옆에 툭 튀어나온 부위의 명칭은?',opts:['측방소극','종말소극','어깨(Shouldering)','수극'],ans:2,exp:'어깨(Shouldering)는 간흡충란의 난개(뚜껑) 양쪽에 툭 튀어나온 구조로 간흡충란의 중요한 형태적 특징입니다.'},
+  {q:'주혈흡충이 인체로 침입하는 주요 경로는?',opts:['경구감염','경피감염','곤충매개','태반감염'],ans:1,exp:'주혈흡충의 유미유충(Cercaria)은 피부를 직접 뚫고 들어오는 경피 감염 방식을 취합니다.'},
+  {q:'만손주혈흡충란의 옆면에 튀어나온 가시 구조의 이름은?',opts:['종말소극','측방소극','어깨','수극'],ans:1,exp:'만손주혈흡충란은 측방소극(측면 가시)이 특징이며 방광주혈흡충란은 종말소극(끝 가시)입니다.'},
+  {q:'흡충류의 충란 중 소변에서 주로 발견되는 종은?',opts:['간흡충','폐흡충','만손주혈흡충','방광주혈흡충'],ans:3,exp:'방광주혈흡충(S. haematobium)은 방광 정맥에 기생하므로 충란이 소변을 통해 배출됩니다.'},
+  {q:'흡충류의 감염형 형태는?',opts:['미라시디움','유미유충','피낭유충(Metacercaria)','난포낭'],ans:2,exp:'피낭유충(Metacercaria)이 흡충류의 감염형입니다. 주혈흡충은 예외적으로 유미유충이 경피 감염합니다.'},
+]},
+{id:'c08',part:'Part 3. 연충류',week:'8주차',title:'조충류 (Cestoda)',sub:'무구조충·유구조충·광절열두조충·스파르가눔',color:'var(--pink)',visible:false,
+summary:[
+  '마디(편절)가 있는 띠 모양이며 소화기관이 없습니다. 두절·경부·편절로 구성되며 <strong>자웅동체</strong>입니다.',
+  '<strong>무구조충(쇠고기 매개)</strong>과 <strong>유구조충(돼지고기 매개)</strong>은 수태편절의 <strong>자궁측지 수</strong>로 감별합니다. 무구조충 15~30개, 유구조충 7~13개입니다.',
+  '<strong>유구조충</strong>의 충란을 직접 섭취하면 <strong>낭미충증</strong>이 발생하여 전신 조직에 유충이 퍼집니다.',
+  '<strong>광절열두조충</strong>은 어류를 통해 감염되며 <strong>비타민 B12 결핍성 빈혈</strong>을 일으킵니다. 조충 중 유일하게 난개가 있는 충란을 배출합니다. <strong>스파르가눔</strong>은 뱀·개구리 생식으로 감염됩니다.',
+],
+points:[
+  '<em>무구조충</em>: 쇠고기 매개, 두절에 <strong>갈고리 없음</strong>, 자궁측지 15~30개',
+  '<em>유구조충</em>: 돼지고기 매개, 두절에 <strong>갈고리 있음</strong>, 자궁측지 7~13개',
+  '<em>유구조충 충란 섭취</em>: → <strong>낭미충증</strong> (전신 조직 유충 감염)',
+  '<em>광절열두조충</em>: 어류 매개, <strong>비타민 B12 결핍성 악성 빈혈</strong>',
+  '<em>광절열두조충란</em>: 조충 중 유일하게 <strong>난개(뚜껑)</strong> 있는 충란 배출',
+  '<em>스파르가눔</em>: 만손열두조충의 유충, 뱀·개구리 생식 시 감염',
+  '조충 머리 = <strong>두절(Scolex)</strong>, 몸 마디 하나 = <strong>편절(Proglottid)</strong>',
+],
+quizzes:[
+  {q:'덜 익은 소고기를 통해 감염되며 두절에 갈고리가 없는 조충은?',opts:['유구조충','무구조충(민촌충)','광절열두조충','왜소조충'],ans:1,exp:'무구조충(민촌충, Taenia saginata)은 소고기 매개이며 두절에 갈고리가 없습니다.'},
+  {q:'돼지고기를 통해 감염되며 두절에 갈고리가 있는 조충은?',opts:['무구조충','유구조충(갈고리촌충)','광절열두조충','스파르가눔'],ans:1,exp:'유구조충(갈고리촌충, Taenia solium)은 돼지고기 매개이며 두절에 갈고리를 가집니다.'},
+  {q:'유구조충과 무구조충의 가장 큰 감별점은?',opts:['충란 모양','두절 크기','자궁측지 수','체장'],ans:2,exp:'수태편절의 자궁측지 수로 감별합니다. 무구조충 15~30개, 유구조충 7~13개입니다.'},
+  {q:'조충 중 유일하게 충란에 난개(뚜껑)가 있는 종은?',opts:['무구조충','유구조충','광절열두조충','왜소조충'],ans:2,exp:'광절열두조충(Diphyllobothrium latum)만이 조충 중 유일하게 난개(뚜껑)가 있는 충란을 배출합니다.'},
+  {q:'광절열두조충 감염 시 나타날 수 있는 특징적인 빈혈은?',opts:['철결핍성 빈혈','용혈성 빈혈','비타민 B12 결핍성 악성 빈혈','재생불량성 빈혈'],ans:2,exp:'광절열두조충은 숙주보다 비타민 B12 흡수 친화력이 강하여 비타민 B12 결핍성 악성 빈혈을 일으킵니다.'},
+  {q:'유구조충의 충란을 직접 섭취했을 때 유충이 전신 조직에 퍼지는 질환은?',opts:['아메바증','낭미충증','스파르가눔증','샤가스병'],ans:1,exp:'낭미충증(Cysticercosis)은 유구조충 충란 섭취 시 유충(낭미충)이 뇌·눈·근육 등 전신에 퍼지는 심각한 질환입니다.'},
+  {q:'조충의 몸 마디 하나하나를 부르는 명칭은?',opts:['편절(Proglottid)','두절(Scolex)','경부(Neck)','협부'],ans:0,exp:'편절(Proglottid)은 조충 몸체를 구성하는 각각의 마디이며, 성숙편절·수태편절로 나뉩니다.'},
+  {q:'조충의 머리 부분을 무엇이라 하는가?',opts:['편절','두절(Scolex)','경부','흡반'],ans:1,exp:'두절(Scolex)은 조충의 머리 부분으로 흡반과 갈고리(유구조충의 경우)를 가지고 있습니다.'},
+  {q:'뱀이나 개구리를 생식하여 감염되는 만손열두조충 유충의 이름은?',opts:['낭미충','스파르가눔','포자소체','피낭유충'],ans:1,exp:'스파르가눔(Sparganum)은 만손열두조충의 유충으로 뱀·개구리를 날로 먹었을 때 감염됩니다.'},
+  {q:'왜소조충의 특징으로 옳은 것은?',opts:['소고기 매개','중간숙주 필요 없이 직접 감염 가능','어류 매개','경피 감염'],ans:1,exp:'왜소조충(Hymenolepis nana)은 중간숙주 없이 충란을 직접 섭취하여 감염될 수 있는 특이한 조충입니다.'},
+]},
+{id:'c09',part:'Part 4. 기생충학 실습',week:'9주차',title:'기생충학 실습',sub:'검체채취·염색법·충란계산·현미경 측정',color:'var(--coral)',visible:false,
+summary:[
+  '정확한 진단을 위한 검체 채취 및 검사법을 다룹니다. 대변 고정 시 원충 포낭에는 <strong>5%</strong>, 연충 충란에는 <strong>10% 포르말린</strong>을 사용합니다.',
+  '<strong>MGL법(포르말린-에테르 침전법)</strong>은 비중 차이를 이용하며, 원심분리 후 가장 아래의 <strong>침사층</strong>에서 충란을 관찰합니다. 층 분리: 에테르 → 찌꺼기 → 포르말린 → 침사(충란).',
+  '<strong>Stoll\'s법</strong>은 대변 1g당 충란 수(EPG)를 계산하여 감염 강도를 측정합니다. <strong>Sudan III 염색</strong>은 지방 방울을 오렌지색으로 염색하여 지방변을 진단합니다.',
+  '현미경 측정 시 <strong>대안렌즈 측미계</strong>를 대물 측미계로 보정하여 충란 크기를 계산합니다. 대물 측미계의 한 눈금 = <strong>10μm(0.01mm)</strong>.',
+],
+points:[
+  '<em>대변 고정액</em>: 원충 포낭 → <strong>5% 포르말린</strong> / 연충 충란 → <strong>10% 포르말린</strong>',
+  '<em>MGL법 층 분리</em>: 에테르 → 찌꺼기 → 포르말린 → <strong>침사(충란 발견)</strong>',
+  '<em>Stoll\'s법</em>: 대변 1g당 충란 수(EPG) 계산 → <strong>감염 강도 측정</strong>',
+  '<em>Sudan III 염색</em>: 지방 방울 → <strong>오렌지색</strong>으로 염색 (지방변 진단)',
+  '<em>대물 측미계</em>: 한 눈금 = <strong>10μm(0.01mm)</strong>',
+  '<em>말라리아 박층도말법</em>: <strong>종 감별</strong>에 사용 / 후층도말법: 감염 여부 확인',
+  '<em>대변 잠혈 검사</em>: 주로 <strong>대장암</strong> 선별 검사로 이용',
+],
+quizzes:[
+  {q:'대변 내 연충의 충란과 유충을 고정하는 데 가장 적합한 포르말린 농도는?',opts:['5%','10%','15%','20%'],ans:1,exp:'연충 충란과 유충 고정에는 10% 포르말린이 적합하며, 원충 포낭에는 5% 포르말린을 사용합니다.'},
+  {q:'MGL법(포르말린-에테르법)에서 충란이 농축되는 층의 명칭은?',opts:['에테르층','찌꺼기층','포르말린층','침사층(Sediment)'],ans:3,exp:'MGL법에서 원심분리 후 가장 아래에 가라앉는 침사층(Sediment)에서 충란을 관찰합니다.'},
+  {q:'MGL법에서 대변의 지방 성분을 녹여 찌꺼기를 부상시키는 시약은?',opts:['포르말린','에테르','식염수','수산화나트륨'],ans:1,exp:'에테르가 지방 성분을 녹여 찌꺼기를 부상시켜 에테르층과 찌꺼기층을 형성합니다.'},
+  {q:'대변 1g당 포함된 충란 수(EPG)를 구하는 검사법의 명칭은?',opts:['직접도말법','스카치테이프법','스톨씨 희석 충란계산법','집란법'],ans:2,exp:'스톨씨 희석 충란계산법(Stoll\'s dilution egg count method)은 EPG를 구하여 감염 강도를 측정합니다.'},
+  {q:'현미경 하에서 충란의 실제 크기를 측정하기 위해 사용하는 도구는?',opts:['혈구계산판','측미계(Micrometer)','분광광도계','원심분리기'],ans:1,exp:'측미계(Micrometer)는 대안렌즈 측미계와 대물 측미계를 이용하여 충란의 실제 크기를 측정합니다.'},
+  {q:'대물 측미계의 한 눈금 간격의 실제 길이는?',opts:['1μm','5μm','10μm(0.01mm)','100μm'],ans:2,exp:'대물 측미계(Stage micrometer)의 한 눈금 간격은 10μm(0.01mm)이며, 이를 기준으로 대안렌즈 측미계를 보정합니다.'},
+  {q:'대변 내 지방 방울을 확인하기 위해 사용하는 염색액은?',opts:['Giemsa','PAS','Sudan III','H&E'],ans:2,exp:'Sudan III 염색은 지방 방울을 오렌지색으로 염색하여 지방변(Steatorrhea)을 진단하는 데 사용됩니다.'},
+  {q:'말라리아의 종 감별을 위해 얇게 펴서 만드는 혈액 도말법은?',opts:['후층도말법','박층도말법(Thin smear)','직접도말법','집란법'],ans:1,exp:'박층도말법(Thin smear)은 원충의 형태를 상세히 관찰하여 말라리아 종 감별에 사용됩니다. 후층도말법은 감염 여부 확인에 적합합니다.'},
+  {q:'기생충 감염 여부를 피부 반응으로 확인하는 면역학적 검사법은?',opts:['ELISA','피내반응법(Skin test)','보체결합반응','응집반응'],ans:1,exp:'피내반응법(Skin test)은 기생충 항원을 피내에 주사하여 24~48시간 후 피부 반응을 관찰하는 면역학적 검사법입니다.'},
+  {q:'대변 잠혈 검사는 주로 어떤 질환의 선별 검사로 이용되는가?',opts:['위궤양','간암','대장암','폐결핵'],ans:2,exp:'대변 잠혈 검사(Fecal occult blood test)는 주로 대장암의 선별 검사로 이용됩니다.'},
+]},
+];
+const ADMIN_PW = '0628';
+let CC = null; // currentChapter
+let QA = [];   // quizAnswers
+let EX = [];   // extraCards
+let IFL= {deck:[], idx:0, flip:false};
+let adminOK = false;
+
+// ── 스토리지 ──
+function loadEX(){try{EX=JSON.parse(localStorage.getItem('ex')||'[]');}catch(e){EX=[];}}
+function saveEX(){try{localStorage.setItem('ex',JSON.stringify(EX));}catch(e){}}
+function loadVIS(){
+  try{
+    var v=JSON.parse(localStorage.getItem('vis')||'{}');
+    CHAPTERS.forEach(function(c){if(v[c.id]!==undefined)c.visible=v[c.id];});
+  }catch(e){}
+}
+function saveVIS(){
+  var v={};
+  CHAPTERS.forEach(function(c){v[c.id]=c.visible;});
+  try{localStorage.setItem('vis',JSON.stringify(v));}catch(e){}
+}
+
+// ── 라우팅 ──
+function go(page){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+  var el=document.getElementById('pg-'+page);
+  if(!el){return;}
+  el.classList.add('on');
+  var nb=document.getElementById('nb-'+page);
+  if(nb)nb.classList.add('on');
+  if(page==='home')renderHome();
+  if(page==='admin')renderAdmin();
+  window.scrollTo(0,0);
+}
+
+// ── 홈 ──
+function renderHome(){
+  var total=CHAPTERS.length;
+  var open=0; CHAPTERS.forEach(function(c){if(c.visible)open++;});
+  document.getElementById('home-stats').innerHTML=
+    '<div class="hero-stat"><div class="snum" style="color:var(--teal)">'+total+'</div><div class="slbl">전체 챕터</div></div>'+
+    '<div class="hero-stat"><div class="snum" style="color:var(--lime)">'+open+'</div><div class="slbl">공개 챕터</div></div>';
+
+  var parts=[];
+  CHAPTERS.forEach(function(c){if(parts.indexOf(c.part)===-1)parts.push(c.part);});
+  var html='';
+  parts.forEach(function(part){
+    html+='<div class="part-hdr">'+part+'</div><div class="ch-grid">';
+    CHAPTERS.forEach(function(c){
+      if(c.part!==part)return;
+      var lk=!c.visible;
+      var lkic=lk?'<span class="lk-ic">🔒</span>':'';
+      var click=lk?'':'data-id="'+c.id+'" onclick="openCH(this)"';
+      html+='<div class="chi'+(lk?' lk':'')+'" style="--ac:'+c.color+'" '+click+'>'+
+              lkic+
+              '<div class="chi-wk">'+c.week+'</div>'+
+              '<div class="chi-tt">'+c.title+'</div>'+
+              '<div class="chi-sb">'+c.sub+'</div>'+
+            '</div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('home-body').innerHTML=html;
+}
+
+// ── 챕터 열기 ──
+function openCH(el){
+  var id=el.getAttribute('data-id');
+  CC=null;
+  for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].id===id){CC=CHAPTERS[i];break;}}
+  if(!CC)return;
+  var c=CC;
+  QA=[];
+  for(var j=0;j<c.quizzes.length;j++)QA.push(-1);
+
+  // 헤더
+  var hdr=document.getElementById('det-hdr');
+  hdr.style.borderLeftColor=c.color;
+  hdr.innerHTML='<div class="ptag">'+c.part+' · '+c.week+'</div><h2>'+c.title+'</h2><p>'+c.sub+'</p>';
+
+  // 탭 색상
+  document.querySelectorAll('.dtab').forEach(function(t){
+    t.style.setProperty('background','',null);
+    t.style.setProperty('border-color','',null);
+    t.style.setProperty('color','',null);
+  });
+
+  // 탭 초기화
+  switchTab(0);
+
+  // 강의 요약
+  var s0='';
+  c.summary.forEach(function(s){s0+='<div class="sum-box">'+s+'</div>';});
+  document.getElementById('tab-0').innerHTML=s0;
+
+  // 핵심 포인트
+  var s1='<div class="kp-list">';
+  c.points.forEach(function(p){
+    s1+='<div class="kp-item"><div class="kp-dot" style="background:'+c.color+'"></div><p>'+p+'</p></div>';
+  });
+  s1+='</div>';
+  document.getElementById('tab-1').innerHTML=s1;
+
+  // 플래시카드
+  buildIFL();
+
+  // 퀴즈
+  buildQUIZ();
+
+  go('detail');
+}
+
+// ── 탭 전환 ──
+function switchTab(n){
+  document.querySelectorAll('.dtab').forEach(function(t,i){t.classList.toggle('on',i===n);});
+  for(var i=0;i<4;i++){
+    var p=document.getElementById('tab-'+i);
+    if(p)p.classList.toggle('on',i===n);
+  }
+}
+
+// ── 인라인 플래시카드 ──
+function buildIFL(){
+  if(!CC)return;
+  var c=CC;
+  IFL.deck=c.quizzes.map(function(q){return {q:q.q, a:'정답: '+q.opts[q.ans]+'\n\n'+q.exp};});
+  IFL.idx=0; IFL.flip=false;
+  renderIFL();
+}
+
+function renderIFL(){
+  var c=CC;
+  var d=IFL.deck[IFL.idx];
+  var el=document.getElementById('tab-2');
+  if(!el)return;
+  el.innerHTML=
+    '<div class="ifl-wrap">'+
+      '<div class="ifl-top">'+
+        '<span class="ifl-cnt">'+(IFL.idx+1)+' / '+IFL.deck.length+'</span>'+
+        '<button class="ifl-shuf" onclick="shuffleIFL()">🔀 셔플</button>'+
+      '</div>'+
+      '<div class="ifl-card'+(IFL.flip?' ans':'')+'" onclick="flipIFL()">'+
+        '<div class="ifl-type" style="color:'+(IFL.flip?c.color:'var(--gray)')+'">'+(IFL.flip?'✅ 정답':'❓ 문제')+'</div>'+
+        (IFL.flip?
+          '<div class="ifl-a">'+d.a+'</div>':
+          '<div class="ifl-q">'+d.q+'</div><div class="ifl-hint">탭하여 정답 확인 👆</div>')+
+      '</div>'+
+      '<div class="ifl-nav">'+
+        '<button class="ifl-btn" onclick="moveIFL(-1)">← 이전</button>'+
+        '<button class="ifl-btn" onclick="moveIFL(1)">다음 →</button>'+
+      '</div>'+
+    '</div>';
+}
+
+function flipIFL(){IFL.flip=!IFL.flip;renderIFL();}
+function moveIFL(d){IFL.idx=(IFL.idx+d+IFL.deck.length)%IFL.deck.length;IFL.flip=false;renderIFL();}
+function shuffleIFL(){IFL.deck.sort(function(){return Math.random()-.5;});IFL.idx=0;IFL.flip=false;renderIFL();}
+
+// ── 퀴즈 ──
+function buildQUIZ(){
+  var c=CC;
+  document.getElementById('tab-3').innerHTML=
+    '<div class="quiz-intro" id="quiz-intro">'+
+      '<h3>✏️ '+c.title+' 퀴즈</h3>'+
+      '<p>총 '+c.quizzes.length+'문제입니다.<br>모든 문제 선택 후 <strong>채점하기</strong>를 누르세요.</p>'+
+      '<button class="start-btn" style="background:'+c.color+'" onclick="startQUIZ()">퀴즈 시작 →</button>'+
+    '</div>'+
+    '<div id="q-area" style="display:none;"></div>'+
+    '<div id="r-area" style="display:none;"></div>';
+}
+
+function startQUIZ(){
+  var c=CC;
+  document.getElementById('quiz-intro').style.display='none';
+  var qa=document.getElementById('q-area');
+  qa.style.display='block';
+  var h='<div class="qprog"><span class="qpnum" id="qp-t">0/'+c.quizzes.length+'</span>'+
+         '<div class="pbar"><div class="pfill" id="qp-f" style="width:0%;background:'+c.color+'"></div></div></div>';
+  c.quizzes.forEach(function(q,qi){
+    h+='<div class="q-card">'+
+         '<div class="q-num">문제 '+(qi+1)+' / '+c.quizzes.length+'</div>'+
+         '<div class="q-text">'+q.q+'</div><div class="opts">';
+    q.opts.forEach(function(o,oi){
+      h+='<div class="opt" id="op-'+qi+'-'+oi+'" onclick="pickOPT('+qi+','+oi+')">'+
+           '<div class="ol">'+['①','②','③','④'][oi]+'</div><span>'+o+'</span></div>';
+    });
+    h+='</div></div>';
+  });
+  h+='<button class="qsub" onclick="gradeQUIZ()">채점하기 ✓</button>';
+  qa.innerHTML=h;
+  updPROG();
+}
+
+function pickOPT(qi,oi){
+  if(document.getElementById('r-area').style.display==='block')return;
+  if(QA[qi]!==-1){
+    var old=document.getElementById('op-'+qi+'-'+QA[qi]);
+    if(old)old.classList.remove('sel');
+  }
+  QA[qi]=oi;
+  var el=document.getElementById('op-'+qi+'-'+oi);
+  if(el)el.classList.add('sel');
+  updPROG();
+}
+
+function updPROG(){
+  var c=CC;
+  var ans=0; QA.forEach(function(a){if(a!==-1)ans++;});
+  var pct=Math.round(ans/c.quizzes.length*100);
+  var f=document.getElementById('qp-f'),t=document.getElementById('qp-t');
+  if(f)f.style.width=pct+'%';
+  if(t)t.textContent=ans+'/'+c.quizzes.length;
+}
+
+function gradeQUIZ(){
+  var c=CC;
+  var unans=0; QA.forEach(function(a){if(a===-1)unans++;});
+  if(unans>0&&!confirm(unans+'문제 미선택. 그래도 채점할까요?'))return;
+  var score=0;
+  c.quizzes.forEach(function(q,qi){
+    q.opts.forEach(function(_,oi){
+      var el=document.getElementById('op-'+qi+'-'+oi);
+      if(!el)return;
+      el.onclick=null; el.classList.add('done');
+      if(oi===q.ans){
+        el.style.borderColor='var(--lime)'; el.style.background='rgba(134,239,172,.08)';
+        el.querySelector('.ol').style.cssText='background:var(--lime);color:var(--bg);';
+      } else if(oi===QA[qi]){
+        el.style.borderColor='var(--coral)'; el.style.background='rgba(248,113,113,.08)';
+        el.querySelector('.ol').style.cssText='background:var(--coral);color:var(--bg);';
+      }
+    });
+    if(QA[qi]===q.ans)score++;
+  });
+  var pct=Math.round(score/c.quizzes.length*100);
+  var msg=pct>=90?'🏆 완벽!':pct>=70?'🎉 잘했어요!':pct>=50?'👍 더 공부해요':'📚 복습해요';
+  var rv='';
+  c.quizzes.forEach(function(q,qi){
+    var ok=QA[qi]===q.ans;
+    rv+='<div class="rv-item">'+
+          '<div class="rv-hd">'+
+            '<div class="rv-bg '+(ok?'ok':'ng')+'">'+(ok?'✓':'✗')+'</div>'+
+            '<div class="rv-q">Q'+(qi+1)+'. '+q.q+'</div>'+
+          '</div>'+
+          '<div class="rv-bd">'+
+            '<div class="rv-ok">정답: '+q.opts[q.ans]+'</div>'+
+            (!ok?'<div class="rv-ng">내 답: '+(QA[qi]===-1?'미선택':q.opts[QA[qi]])+'</div>':'')+
+            '<div class="rv-ex">해설: '+q.exp+'</div>'+
+          '</div>'+
+        '</div>';
+  });
+  var ra=document.getElementById('r-area');
+  ra.style.display='block';
+  ra.innerHTML=
+    '<div class="res-card">'+
+      '<div class="res-sc" style="color:'+c.color+'">'+pct+'점</div>'+
+      '<h3>'+msg+'</h3>'+
+      '<p>'+c.quizzes.length+'문제 중 <strong>'+score+'문제 정답</strong> · 오답 '+(c.quizzes.length-score)+'문제</p>'+
+      '<button class="retry" onclick="retryQUIZ()">🔄 다시 풀기</button>'+
+    '</div>'+
+    '<h4 style="font-size:13.5px;margin-bottom:10px;color:var(--gray);">📋 문항별 해설</h4>'+
+    rv;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
+  var sub=document.querySelector('.qsub');
+  if(sub)sub.style.display='none';
+}
+
+function retryQUIZ(){
+  QA=[];
+  for(var i=0;i<CC.quizzes.length;i++)QA.push(-1);
+  buildQUIZ();
+}
+
+// ── 제작의도 연락처 ──
+function toggleContact(){
+  var panel=document.getElementById('contact-panel');
+  var arr=document.getElementById('prof-arr');
+  var card=document.getElementById('prof-card');
+  if(panel.style.display==='none'||panel.style.display===''){
+    panel.style.display='block';
+    arr.style.transform='rotate(180deg)';
+    card.style.borderColor='var(--teal)';
+  } else {
+    panel.style.display='none';
+    arr.style.transform='';
+    card.style.borderColor='';
+  }
+}
+
+// ── 관리자 ──
+function tryAdmin(){
+  if(adminOK){go('admin');return;}
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-err').style.display='none';
+  document.getElementById('ov-login').classList.add('on');
+  setTimeout(function(){document.getElementById('pw-input').focus();},100);
+}
+function checkPw(){
+  if(document.getElementById('pw-input').value===ADMIN_PW){
+    adminOK=true; closeOv(); go('admin');
+  } else {
+    document.getElementById('pw-err').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+function closeOv(){document.getElementById('ov-login').classList.remove('on');}
+function adminLogout(){adminOK=false; go('home');}
+
+function showATab(n){
+  document.querySelectorAll('.atab').forEach(function(t,i){t.classList.toggle('on',i===n);});
+  document.querySelectorAll('.apanel').forEach(function(p,i){p.classList.toggle('on',i===n);});
+}
+
+function renderAdmin(){
+  // 공개 설정
+  var vl=document.getElementById('vis-list');
+  vl.innerHTML=CHAPTERS.map(function(c,i){
+    return '<div class="vis-row">'+
+             '<div class="vi"><strong>'+c.week+' · '+c.title+'</strong>'+
+             '<small>'+(c.visible?'✅ 공개':'🔒 비공개')+'</small></div>'+
+             '<label class="tog"><input type="checkbox" '+(c.visible?'checked':'')+
+             ' onchange="toggleVIS('+i+',this.checked)"><span class="tsl"></span></label>'+
+           '</div>';
+  }).join('');
+  // 카드 목록
+  renderCL();
+  // 카테고리 셀렉트
+  var sel=document.getElementById('nc-cat');
+  sel.innerHTML=CHAPTERS.map(function(c){
+    return '<option value="'+c.id+'">'+c.week+' '+c.title+'</option>';
+  }).join('');
+}
+
+function toggleVIS(i,val){
+  CHAPTERS[i].visible=val; saveVIS(); renderAdmin(); renderHome();
+}
+
+function renderCL(){
+  document.getElementById('card-list').innerHTML=EX.map(function(c,i){
+    return '<div class="c-item">'+
+             '<div class="ci">'+c.q+'<small>'+c.cat+'</small></div>'+
+             '<button class="cdel" onclick="delCard('+i+')">🗑</button>'+
+           '</div>';
+  }).join('');
+}
+
+function addCard(){
+  var q=document.getElementById('nc-q').value.trim();
+  var a=document.getElementById('nc-a').value.trim();
+  var cid=document.getElementById('nc-cat').value;
+  var ch=null;
+  CHAPTERS.forEach(function(c){if(c.id===cid)ch=c;});
+  if(!q||!a){alert('질문과 답변을 입력해주세요.');return;}
+  EX.push({cat:ch?ch.title:'기타',q:q,a:a});
+  saveEX(); renderCL();
+  document.getElementById('nc-q').value='';
+  document.getElementById('nc-a').value='';
+}
+
+function delCard(i){
+  if(!confirm('삭제할까요?'))return;
+  EX.splice(i,1); saveEX(); renderCL();
+}
+
+// ── 초기화 ──
+loadEX();
+loadVIS();
+renderHome();
+</script>
+
+</body>
+</html>
