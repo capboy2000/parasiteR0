@@ -264,7 +264,7 @@ footer strong{color:var(--teal);}footer small{font-family:var(--mono);font-size:
       <button class="atab"    onclick="showATab(1)">플래시카드 관리</button>
     </div>
     <div id="ap-0" class="apanel on">
-      <p style="font-size:12px;color:var(--gray);margin-bottom:11px;">토글을 켜면 즉시 공개됩니다.</p>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:11px;">토글을 켜면 모든 학생 화면에 즉시 공개됩니다.</p>
       <div id="vis-list"></div>
     </div>
     <div id="ap-1" class="apanel">
@@ -557,38 +557,227 @@ quizzes:[
 ];
 
 var ADMIN_PW='0628';
+var FB_URL='https://parasitology-df5b4-default-rtdb.firebaseio.com';
 var CC=null,QA=[],EX=[],IFL={deck:[],idx:0,flip:false},adminOK=false;
+
+// ── Firebase 연동 ──
+function fbGet(path,cb){
+  fetch(FB_URL+path+'.json').then(function(r){return r.json();}).then(cb).catch(function(){cb(null);});
+}
+function fbSet(path,data){
+  fetch(FB_URL+path+'.json',{method:'PUT',body:JSON.stringify(data)}).catch(function(){});
+}
+
+// ── 공개 설정: Firebase 우선, 없으면 기본값 ──
+function loadVIS(cb){
+  fbGet('/visibility',function(v){
+    if(v){
+      for(var i=0;i<CHAPTERS.length;i++){
+        if(v[CHAPTERS[i].id]!==undefined)CHAPTERS[i].visible=v[CHAPTERS[i].id];
+      }
+    }
+    if(cb)cb();
+  });
+}
+function saveVIS(){
+  var v={};
+  for(var i=0;i<CHAPTERS.length;i++){v[CHAPTERS[i].id]=CHAPTERS[i].visible;}
+  fbSet('/visibility',v);
+}
+
+// ── 플래시카드: localStorage ──
 function loadEX(){try{EX=JSON.parse(localStorage.getItem('ex')||'[]');}catch(e){EX=[];}}
 function saveEX(){try{localStorage.setItem('ex',JSON.stringify(EX));}catch(e){}}
-function loadVIS(){try{var v=JSON.parse(localStorage.getItem('vis')||'{}');for(var i=0;i<CHAPTERS.length;i++){if(v[CHAPTERS[i].id]!==undefined)CHAPTERS[i].visible=v[CHAPTERS[i].id];}}catch(e){}}
-function saveVIS(){var v={};for(var i=0;i<CHAPTERS.length;i++){v[CHAPTERS[i].id]=CHAPTERS[i].visible;}try{localStorage.setItem('vis',JSON.stringify(v));}catch(e){}}
-function go(page){var ps=document.querySelectorAll('.page');for(var i=0;i<ps.length;i++)ps[i].classList.remove('on');var ns=document.querySelectorAll('.nb');for(var i=0;i<ns.length;i++)ns[i].classList.remove('on');var el=document.getElementById('pg-'+page);if(!el)return;el.classList.add('on');var nb=document.getElementById('nb-'+page);if(nb)nb.classList.add('on');if(page==='home')renderHome();if(page==='admin')renderAdmin();window.scrollTo(0,0);}
-function renderHome(){var total=CHAPTERS.length,open=0;for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].visible)open++;}document.getElementById('home-stats').innerHTML='<div class="hero-stat"><div class="sn" style="color:var(--teal)">'+total+'</div><div class="sl">전체 챕터</div></div><div class="hero-stat"><div class="sn" style="color:var(--lime)">'+open+'</div><div class="sl">공개 챕터</div></div>';var parts=[];for(var i=0;i<CHAPTERS.length;i++){if(parts.indexOf(CHAPTERS[i].part)===-1)parts.push(CHAPTERS[i].part);}var h='';for(var p=0;p<parts.length;p++){h+='<div class="part-hdr">'+parts[p]+'</div><div class="ch-grid">';for(var i=0;i<CHAPTERS.length;i++){var c=CHAPTERS[i];if(c.part!==parts[p])continue;var lk=!c.visible;h+='<div class="chi'+(lk?' lk':'')+'" style="--ac:'+c.color+'"'+(lk?'':' data-id="'+c.id+'" onclick="openCH(this)"')+'>'+(lk?'<span class="lk-ic">&#128274;</span>':'')+'<div class="chi-wk">'+c.week+'</div><div class="chi-tt">'+c.title+'</div><div class="chi-sb">'+c.sub+'</div></div>';}h+='</div>';}document.getElementById('home-body').innerHTML=h;}
-function openCH(el){var id=el.getAttribute('data-id');CC=null;for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].id===id){CC=CHAPTERS[i];break;}}if(!CC)return;QA=[];for(var i=0;i<CC.quizzes.length;i++)QA.push(-1);var hdr=document.getElementById('det-hdr');hdr.style.borderLeftColor=CC.color;hdr.innerHTML='<div class="ptag">'+CC.part+' &middot; '+CC.week+'</div><h2>'+CC.title+'</h2><p>'+CC.sub+'</p>';showTab(0);var s0='';for(var i=0;i<CC.summary.length;i++)s0+='<div class="sum-box">'+CC.summary[i]+'</div>';document.getElementById('tab-0').innerHTML=s0;var s1='<div class="kp-list">';for(var i=0;i<CC.points.length;i++)s1+='<div class="kp-item"><div class="kp-dot" style="background:'+CC.color+'"></div><p>'+CC.points[i]+'</p></div>';document.getElementById('tab-1').innerHTML=s1+'</div>';buildIFL();buildQUIZ();go('detail');}
-function showTab(n){var ts=document.querySelectorAll('.dtab');var ps=document.querySelectorAll('.dpanel');for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',i===n);for(var i=0;i<ps.length;i++)ps[i].classList.toggle('on',i===n);}
-function buildIFL(){IFL.deck=[];for(var i=0;i<CC.quizzes.length;i++){IFL.deck.push({q:CC.quizzes[i].q,a:'정답: '+CC.quizzes[i].opts[CC.quizzes[i].ans]+'\n\n'+CC.quizzes[i].exp});}IFL.idx=0;IFL.flip=false;renderIFL();}
-function renderIFL(){var d=IFL.deck[IFL.idx];var el=document.getElementById('tab-2');if(!el||!d)return;el.innerHTML='<div class="ifl-wrap"><div class="ifl-top"><span class="ifl-cnt">'+(IFL.idx+1)+' / '+IFL.deck.length+'</span><button class="ifl-shuf" onclick="shuffleIFL()">&#128256; 셔플</button></div><div class="ifl-card'+(IFL.flip?' ans':'')+'" onclick="flipIFL()"><div class="ifl-type" style="color:'+(IFL.flip?CC.color:'var(--gray)')+'">'+(IFL.flip?'&#9989; 정답':'&#10067; 문제')+'</div>'+(IFL.flip?'<div class="ifl-a">'+d.a+'</div>':'<div class="ifl-q">'+d.q+'</div><div class="ifl-hint">탭하여 정답 확인</div>')+'</div><div class="ifl-nav"><button class="ifl-btn" onclick="moveIFL(-1)">&#8592; 이전</button><button class="ifl-btn" onclick="moveIFL(1)">다음 &#8594;</button></div></div>';}
+
+// ── 라우팅 ──
+function go(page){
+  var ps=document.querySelectorAll('.page');for(var i=0;i<ps.length;i++)ps[i].classList.remove('on');
+  var ns=document.querySelectorAll('.nb');for(var i=0;i<ns.length;i++)ns[i].classList.remove('on');
+  var el=document.getElementById('pg-'+page);if(!el)return;
+  el.classList.add('on');
+  var nb=document.getElementById('nb-'+page);if(nb)nb.classList.add('on');
+  if(page==='home')renderHome();
+  if(page==='admin')renderAdmin();
+  window.scrollTo(0,0);
+}
+
+// ── 홈 ──
+function renderHome(){
+  var total=CHAPTERS.length,open=0;
+  for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].visible)open++;}
+  document.getElementById('home-stats').innerHTML=
+    '<div class="hero-stat"><div class="sn" style="color:var(--teal)">'+total+'</div><div class="sl">전체 챕터</div></div>'+
+    '<div class="hero-stat"><div class="sn" style="color:var(--lime)">'+open+'</div><div class="sl">공개 챕터</div></div>';
+  var parts=[];
+  for(var i=0;i<CHAPTERS.length;i++){if(parts.indexOf(CHAPTERS[i].part)===-1)parts.push(CHAPTERS[i].part);}
+  var h='';
+  for(var p=0;p<parts.length;p++){
+    h+='<div class="part-hdr">'+parts[p]+'</div><div class="ch-grid">';
+    for(var i=0;i<CHAPTERS.length;i++){
+      var c=CHAPTERS[i];if(c.part!==parts[p])continue;
+      var lk=!c.visible;
+      h+='<div class="chi'+(lk?' lk':'')+'" style="--ac:'+c.color+'"'+(lk?'':' data-id="'+c.id+'" onclick="openCH(this)"')+'>'+(lk?'<span class="lk-ic">&#128274;</span>':'')+'<div class="chi-wk">'+c.week+'</div><div class="chi-tt">'+c.title+'</div><div class="chi-sb">'+c.sub+'</div></div>';
+    }
+    h+='</div>';
+  }
+  document.getElementById('home-body').innerHTML=h;
+}
+
+// ── 챕터 열기 ──
+function openCH(el){
+  var id=el.getAttribute('data-id');CC=null;
+  for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].id===id){CC=CHAPTERS[i];break;}}
+  if(!CC)return;
+  QA=[];for(var i=0;i<CC.quizzes.length;i++)QA.push(-1);
+  var hdr=document.getElementById('det-hdr');
+  hdr.style.borderLeftColor=CC.color;
+  hdr.innerHTML='<div class="ptag">'+CC.part+' &middot; '+CC.week+'</div><h2>'+CC.title+'</h2><p>'+CC.sub+'</p>';
+  showTab(0);
+  var s0='';for(var i=0;i<CC.summary.length;i++)s0+='<div class="sum-box">'+CC.summary[i]+'</div>';
+  document.getElementById('tab-0').innerHTML=s0;
+  var s1='<div class="kp-list">';
+  for(var i=0;i<CC.points.length;i++)s1+='<div class="kp-item"><div class="kp-dot" style="background:'+CC.color+'"></div><p>'+CC.points[i]+'</p></div>';
+  document.getElementById('tab-1').innerHTML=s1+'</div>';
+  buildIFL();buildQUIZ();go('detail');
+}
+
+// ── 탭 전환 ──
+function showTab(n){
+  var ts=document.querySelectorAll('.dtab');var ps=document.querySelectorAll('.dpanel');
+  for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',i===n);
+  for(var i=0;i<ps.length;i++)ps[i].classList.toggle('on',i===n);
+}
+
+// ── 플래시카드 ──
+function buildIFL(){
+  IFL.deck=[];
+  for(var i=0;i<CC.quizzes.length;i++){IFL.deck.push({q:CC.quizzes[i].q,a:'정답: '+CC.quizzes[i].opts[CC.quizzes[i].ans]+'\n\n'+CC.quizzes[i].exp});}
+  IFL.idx=0;IFL.flip=false;renderIFL();
+}
+function renderIFL(){
+  var d=IFL.deck[IFL.idx];var el=document.getElementById('tab-2');if(!el||!d)return;
+  el.innerHTML='<div class="ifl-wrap"><div class="ifl-top"><span class="ifl-cnt">'+(IFL.idx+1)+' / '+IFL.deck.length+'</span><button class="ifl-shuf" onclick="shuffleIFL()">&#128256; 셔플</button></div><div class="ifl-card'+(IFL.flip?' ans':'')+'" onclick="flipIFL()"><div class="ifl-type" style="color:'+(IFL.flip?CC.color:'var(--gray)')+'">'+(IFL.flip?'&#9989; 정답':'&#10067; 문제')+'</div>'+(IFL.flip?'<div class="ifl-a">'+d.a+'</div>':'<div class="ifl-q">'+d.q+'</div><div class="ifl-hint">탭하여 정답 확인</div>')+'</div><div class="ifl-nav"><button class="ifl-btn" onclick="moveIFL(-1)">&#8592; 이전</button><button class="ifl-btn" onclick="moveIFL(1)">다음 &#8594;</button></div></div>';
+}
 function flipIFL(){IFL.flip=!IFL.flip;renderIFL();}
 function moveIFL(d){IFL.idx=(IFL.idx+d+IFL.deck.length)%IFL.deck.length;IFL.flip=false;renderIFL();}
 function shuffleIFL(){IFL.deck.sort(function(){return Math.random()-.5;});IFL.idx=0;IFL.flip=false;renderIFL();}
-function buildQUIZ(){var c=CC;document.getElementById('tab-3').innerHTML='<div id="quiz-intro" class="quiz-intro"><h3>&#9999;&#65039; '+c.title+' 퀴즈</h3><p>총 '+c.quizzes.length+'문제입니다.<br>모든 문제 선택 후 <strong>채점하기</strong>를 누르세요.</p><button class="start-btn" style="background:'+c.color+'" onclick="startQUIZ()">퀴즈 시작 &#8594;</button></div><div id="q-area" style="display:none"></div><div id="r-area" style="display:none"></div>';}
-function startQUIZ(){var c=CC;document.getElementById('quiz-intro').style.display='none';var qa=document.getElementById('q-area');qa.style.display='block';var h='<div class="qprog"><span class="qpnum" id="qp-t">0/'+c.quizzes.length+'</span><div class="pbar"><div class="pfill" id="qp-f" style="width:0%;background:'+c.color+'"></div></div></div>';for(var qi=0;qi<c.quizzes.length;qi++){var q=c.quizzes[qi];h+='<div class="q-card"><div class="q-num">문제 '+(qi+1)+' / '+c.quizzes.length+'</div><div class="q-text">'+q.q+'</div><div class="opts">';for(var oi=0;oi<q.opts.length;oi++){h+='<div class="opt" id="op-'+qi+'-'+oi+'" onclick="pickOPT('+qi+','+oi+')"><div class="ol">'+['&#9312;','&#9313;','&#9314;','&#9315;'][oi]+'</div><span>'+q.opts[oi]+'</span></div>';}h+='</div></div>';}h+='<button class="qsub" id="qsub-btn" onclick="gradeQUIZ()">채점하기 &#10003;</button>';qa.innerHTML=h;updPROG();}
-function pickOPT(qi,oi){if(document.getElementById('r-area').style.display==='block')return;if(QA[qi]!==-1){var old=document.getElementById('op-'+qi+'-'+QA[qi]);if(old)old.classList.remove('sel');}QA[qi]=oi;var el=document.getElementById('op-'+qi+'-'+oi);if(el)el.classList.add('sel');updPROG();}
-function updPROG(){var ans=0;for(var i=0;i<QA.length;i++){if(QA[i]!==-1)ans++;}var pct=CC?Math.round(ans/CC.quizzes.length*100):0;var f=document.getElementById('qp-f'),t=document.getElementById('qp-t');if(f)f.style.width=pct+'%';if(t)t.textContent=ans+'/'+(CC?CC.quizzes.length:0);}
-function gradeQUIZ(){var c=CC;var unans=0;for(var i=0;i<QA.length;i++){if(QA[i]===-1)unans++;}if(unans>0&&!confirm(unans+'문제 미선택. 그래도 채점할까요?'))return;var score=0;for(var qi=0;qi<c.quizzes.length;qi++){var q=c.quizzes[qi];for(var oi=0;oi<q.opts.length;oi++){var el=document.getElementById('op-'+qi+'-'+oi);if(!el)continue;el.onclick=null;if(oi===q.ans){el.style.borderColor='var(--lime)';el.style.background='rgba(134,239,172,.08)';el.querySelector('.ol').style.background='var(--lime)';el.querySelector('.ol').style.color='#090e1a';}else if(oi===QA[qi]){el.style.borderColor='var(--coral)';el.style.background='rgba(248,113,113,.08)';el.querySelector('.ol').style.background='var(--coral)';el.querySelector('.ol').style.color='#090e1a';}}if(QA[qi]===q.ans)score++;}var pct=Math.round(score/c.quizzes.length*100);var msg=pct>=90?'&#127942; 완벽!':pct>=70?'&#127881; 잘했어요!':pct>=50?'&#128077; 더 공부해요':'&#128218; 복습해요';var rv='';for(var qi=0;qi<c.quizzes.length;qi++){var q=c.quizzes[qi];var ok=QA[qi]===q.ans;rv+='<div class="rv-item"><div class="rv-hd"><div class="rv-bg '+(ok?'ok':'ng')+'">'+(ok?'&#10003;':'&#10007;')+'</div><div class="rv-q">Q'+(qi+1)+'. '+q.q+'</div></div><div class="rv-bd"><div class="rv-ok">정답: '+q.opts[q.ans]+'</div>'+(!ok?'<div class="rv-ng">내 답: '+(QA[qi]===-1?'미선택':q.opts[QA[qi]])+'</div>':'')+'<div class="rv-ex">해설: '+q.exp+'</div></div></div>';}var ra=document.getElementById('r-area');ra.style.display='block';ra.innerHTML='<div class="res-card"><div class="res-sc" style="color:'+c.color+'">'+pct+'점</div><h3>'+msg+'</h3><p>'+c.quizzes.length+'문제 중 <strong>'+score+'문제 정답</strong></p><button class="retry" onclick="retryQUIZ()">&#128260; 다시 풀기</button></div><h4 style="font-size:13px;margin-bottom:10px;color:var(--gray);">문항별 해설</h4>'+rv;ra.scrollIntoView({behavior:'smooth',block:'start'});var sub=document.getElementById('qsub-btn');if(sub)sub.style.display='none';}
+
+// ── 퀴즈 ──
+function buildQUIZ(){
+  var c=CC;
+  document.getElementById('tab-3').innerHTML='<div id="quiz-intro" class="quiz-intro"><h3>&#9999;&#65039; '+c.title+' 퀴즈</h3><p>총 '+c.quizzes.length+'문제입니다.<br>모든 문제 선택 후 <strong>채점하기</strong>를 누르세요.</p><button class="start-btn" style="background:'+c.color+'" onclick="startQUIZ()">퀴즈 시작 &#8594;</button></div><div id="q-area" style="display:none"></div><div id="r-area" style="display:none"></div>';
+}
+function startQUIZ(){
+  var c=CC;document.getElementById('quiz-intro').style.display='none';
+  var qa=document.getElementById('q-area');qa.style.display='block';
+  var h='<div class="qprog"><span class="qpnum" id="qp-t">0/'+c.quizzes.length+'</span><div class="pbar"><div class="pfill" id="qp-f" style="width:0%;background:'+c.color+'"></div></div></div>';
+  for(var qi=0;qi<c.quizzes.length;qi++){
+    var q=c.quizzes[qi];
+    h+='<div class="q-card"><div class="q-num">문제 '+(qi+1)+' / '+c.quizzes.length+'</div><div class="q-text">'+q.q+'</div><div class="opts">';
+    for(var oi=0;oi<q.opts.length;oi++){h+='<div class="opt" id="op-'+qi+'-'+oi+'" onclick="pickOPT('+qi+','+oi+')"><div class="ol">'+['&#9312;','&#9313;','&#9314;','&#9315;'][oi]+'</div><span>'+q.opts[oi]+'</span></div>';}
+    h+='</div></div>';
+  }
+  h+='<button class="qsub" id="qsub-btn" onclick="gradeQUIZ()">채점하기 &#10003;</button>';
+  qa.innerHTML=h;updPROG();
+}
+function pickOPT(qi,oi){
+  if(document.getElementById('r-area').style.display==='block')return;
+  if(QA[qi]!==-1){var old=document.getElementById('op-'+qi+'-'+QA[qi]);if(old)old.classList.remove('sel');}
+  QA[qi]=oi;var el=document.getElementById('op-'+qi+'-'+oi);if(el)el.classList.add('sel');updPROG();
+}
+function updPROG(){
+  var ans=0;for(var i=0;i<QA.length;i++){if(QA[i]!==-1)ans++;}
+  var pct=CC?Math.round(ans/CC.quizzes.length*100):0;
+  var f=document.getElementById('qp-f'),t=document.getElementById('qp-t');
+  if(f)f.style.width=pct+'%';if(t)t.textContent=ans+'/'+(CC?CC.quizzes.length:0);
+}
+function gradeQUIZ(){
+  var c=CC;var unans=0;for(var i=0;i<QA.length;i++){if(QA[i]===-1)unans++;}
+  if(unans>0&&!confirm(unans+'문제 미선택. 그래도 채점할까요?'))return;
+  var score=0;
+  for(var qi=0;qi<c.quizzes.length;qi++){
+    var q=c.quizzes[qi];
+    for(var oi=0;oi<q.opts.length;oi++){
+      var el=document.getElementById('op-'+qi+'-'+oi);if(!el)continue;el.onclick=null;
+      if(oi===q.ans){el.style.borderColor='var(--lime)';el.style.background='rgba(134,239,172,.08)';el.querySelector('.ol').style.background='var(--lime)';el.querySelector('.ol').style.color='#090e1a';}
+      else if(oi===QA[qi]){el.style.borderColor='var(--coral)';el.style.background='rgba(248,113,113,.08)';el.querySelector('.ol').style.background='var(--coral)';el.querySelector('.ol').style.color='#090e1a';}
+    }
+    if(QA[qi]===q.ans)score++;
+  }
+  var pct=Math.round(score/c.quizzes.length*100);
+  var msg=pct>=90?'&#127942; 완벽!':pct>=70?'&#127881; 잘했어요!':pct>=50?'&#128077; 더 공부해요':'&#128218; 복습해요';
+  var rv='';
+  for(var qi=0;qi<c.quizzes.length;qi++){
+    var q=c.quizzes[qi];var ok=QA[qi]===q.ans;
+    rv+='<div class="rv-item"><div class="rv-hd"><div class="rv-bg '+(ok?'ok':'ng')+'">'+(ok?'&#10003;':'&#10007;')+'</div><div class="rv-q">Q'+(qi+1)+'. '+q.q+'</div></div><div class="rv-bd"><div class="rv-ok">정답: '+q.opts[q.ans]+'</div>'+(!ok?'<div class="rv-ng">내 답: '+(QA[qi]===-1?'미선택':q.opts[QA[qi]])+'</div>':'')+'<div class="rv-ex">해설: '+q.exp+'</div></div></div>';
+  }
+  var ra=document.getElementById('r-area');ra.style.display='block';
+  ra.innerHTML='<div class="res-card"><div class="res-sc" style="color:'+c.color+'">'+pct+'점</div><h3>'+msg+'</h3><p>'+c.quizzes.length+'문제 중 <strong>'+score+'문제 정답</strong></p><button class="retry" onclick="retryQUIZ()">&#128260; 다시 풀기</button></div><h4 style="font-size:13px;margin-bottom:10px;color:var(--gray);">문항별 해설</h4>'+rv;
+  ra.scrollIntoView({behavior:'smooth',block:'start'});
+  var sub=document.getElementById('qsub-btn');if(sub)sub.style.display='none';
+}
 function retryQUIZ(){QA=[];for(var i=0;i<CC.quizzes.length;i++)QA.push(-1);buildQUIZ();}
-function toggleContact(){var p=document.getElementById('c-panel');var a=document.getElementById('prof-arr');var c=document.getElementById('prof-card');if(!p)return;if(p.style.display==='block'){p.style.display='none';a.style.transform='';c.style.borderColor='';}else{p.style.display='block';a.style.transform='rotate(180deg)';c.style.borderColor='var(--teal)';}}
-function tryAdmin(){if(adminOK){go('admin');return;}document.getElementById('pw-input').value='';document.getElementById('pw-err').style.display='none';document.getElementById('ov-login').classList.add('on');setTimeout(function(){document.getElementById('pw-input').focus();},150);}
-function checkPw(){if(document.getElementById('pw-input').value===ADMIN_PW){adminOK=true;closeOv();go('admin');}else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-input').value='';}}
+
+// ── 연락처 토글 ──
+function toggleContact(){
+  var p=document.getElementById('c-panel');var a=document.getElementById('prof-arr');var c=document.getElementById('prof-card');if(!p)return;
+  if(p.style.display==='block'){p.style.display='none';a.style.transform='';c.style.borderColor='';}
+  else{p.style.display='block';a.style.transform='rotate(180deg)';c.style.borderColor='var(--teal)';}
+}
+
+// ── 관리자 ──
+function tryAdmin(){
+  if(adminOK){go('admin');return;}
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-err').style.display='none';
+  document.getElementById('ov-login').classList.add('on');
+  setTimeout(function(){document.getElementById('pw-input').focus();},150);
+}
+function checkPw(){
+  if(document.getElementById('pw-input').value===ADMIN_PW){adminOK=true;closeOv();go('admin');}
+  else{document.getElementById('pw-err').style.display='block';document.getElementById('pw-input').value='';}
+}
 function closeOv(){document.getElementById('ov-login').classList.remove('on');}
 function adminLogout(){adminOK=false;go('home');}
-function showATab(n){var ts=document.querySelectorAll('.atab');var ps=document.querySelectorAll('.apanel');for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',i===n);for(var i=0;i<ps.length;i++)ps[i].classList.toggle('on',i===n);}
-function renderAdmin(){var h='';for(var i=0;i<CHAPTERS.length;i++){var c=CHAPTERS[i];h+='<div class="vis-row"><div class="vi"><strong>'+c.week+' &middot; '+c.title+'</strong><small>'+(c.visible?'&#9989; 공개':'&#128274; 비공개')+'</small></div><label class="tog"><input type="checkbox" '+(c.visible?'checked':'')+' onchange="toggleVIS('+i+',this.checked)"><span class="tsl"></span></label></div>';}document.getElementById('vis-list').innerHTML=h;renderCL();var sel=document.getElementById('nc-cat');var so='';for(var i=0;i<CHAPTERS.length;i++){so+='<option value="'+CHAPTERS[i].id+'">'+CHAPTERS[i].week+' '+CHAPTERS[i].title+'</option>';}sel.innerHTML=so;}
-function toggleVIS(i,val){CHAPTERS[i].visible=val;saveVIS();renderAdmin();renderHome();}
-function renderCL(){var h='';for(var i=0;i<EX.length;i++){h+='<div class="c-item"><div class="ci">'+EX[i].q+'<small>'+EX[i].cat+'</small></div><button class="cdel" onclick="delCard('+i+')">&#128465;</button></div>';}document.getElementById('card-list').innerHTML=h;}
-function addCard(){var q=document.getElementById('nc-q').value.trim();var a=document.getElementById('nc-a').value.trim();var cid=document.getElementById('nc-cat').value;var cat='기타';for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].id===cid){cat=CHAPTERS[i].title;break;}}if(!q||!a){alert('질문과 답변을 입력해주세요.');return;}EX.push({cat:cat,q:q,a:a});saveEX();renderCL();document.getElementById('nc-q').value='';document.getElementById('nc-a').value='';}
+function showATab(n){
+  var ts=document.querySelectorAll('.atab');var ps=document.querySelectorAll('.apanel');
+  for(var i=0;i<ts.length;i++)ts[i].classList.toggle('on',i===n);
+  for(var i=0;i<ps.length;i++)ps[i].classList.toggle('on',i===n);
+}
+function renderAdmin(){
+  var h='';
+  for(var i=0;i<CHAPTERS.length;i++){
+    var c=CHAPTERS[i];
+    h+='<div class="vis-row"><div class="vi"><strong>'+c.week+' &middot; '+c.title+'</strong><small>'+(c.visible?'&#9989; 공개':'&#128274; 비공개')+'</small></div><label class="tog"><input type="checkbox" '+(c.visible?'checked':'')+' onchange="toggleVIS('+i+',this.checked)"><span class="tsl"></span></label></div>';
+  }
+  document.getElementById('vis-list').innerHTML=h;
+  renderCL();
+  var sel=document.getElementById('nc-cat');var so='';
+  for(var i=0;i<CHAPTERS.length;i++){so+='<option value="'+CHAPTERS[i].id+'">'+CHAPTERS[i].week+' '+CHAPTERS[i].title+'</option>';}
+  sel.innerHTML=so;
+}
+function toggleVIS(i,val){
+  CHAPTERS[i].visible=val;
+  saveVIS();
+  renderAdmin();
+  renderHome();
+}
+function renderCL(){
+  var h='';for(var i=0;i<EX.length;i++){h+='<div class="c-item"><div class="ci">'+EX[i].q+'<small>'+EX[i].cat+'</small></div><button class="cdel" onclick="delCard('+i+')">&#128465;</button></div>';}
+  document.getElementById('card-list').innerHTML=h;
+}
+function addCard(){
+  var q=document.getElementById('nc-q').value.trim();var a=document.getElementById('nc-a').value.trim();var cid=document.getElementById('nc-cat').value;
+  var cat='기타';for(var i=0;i<CHAPTERS.length;i++){if(CHAPTERS[i].id===cid){cat=CHAPTERS[i].title;break;}}
+  if(!q||!a){alert('질문과 답변을 입력해주세요.');return;}
+  EX.push({cat:cat,q:q,a:a});saveEX();renderCL();
+  document.getElementById('nc-q').value='';document.getElementById('nc-a').value='';
+}
 function delCard(i){if(!confirm('삭제할까요?'))return;EX.splice(i,1);saveEX();renderCL();}
-loadEX();loadVIS();renderHome();
+
+// ── 초기화: Firebase에서 공개 설정 불러온 후 홈 렌더 ──
+loadEX();
+loadVIS(function(){renderHome();});
 
 </script>
 
